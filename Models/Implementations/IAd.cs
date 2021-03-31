@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BulletinBoardAPI.Models.Realizations;
 
 namespace BulletinBoardAPI.Models.Implementations
 {
     public interface IAd
     {
-        int Id { get; set; }
+        Guid Id { get; set; }
         int Number { get; set; }
         User User { get; set; }
         string Text { get; set; }

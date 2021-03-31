@@ -1,5 +1,7 @@
+using BulletinBoardAPI.EF;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +25,7 @@ namespace BulletinBoardAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BulletinBoardAPI", Version = "v1" });
             });
+            services.AddDbContext<BulletionBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
