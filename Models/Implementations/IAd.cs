@@ -9,7 +9,7 @@ namespace BulletinBoardAPI.Models.Implementations
         int Number { get; set; }
         User User { get; set; }
         string Text { get; set; }
-        string ImageURL { get; set; }
+        string ImageUrl { get; set; }
         int Rating { get; set; }
         DateTime CreateDate { get; set; }
         DateTime ExpirationDite { get; set; }

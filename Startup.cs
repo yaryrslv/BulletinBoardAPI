@@ -27,7 +27,9 @@ namespace BulletinBoardAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BulletinBoardAPI", Version = "v1" });
             });
-            services.AddDbContext<BulletionBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddTransient<IAdService, AdService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

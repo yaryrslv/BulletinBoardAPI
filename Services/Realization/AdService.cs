@@ -48,7 +48,7 @@ namespace BulletinBoardAPI.Services.Realization
                 await _context.SaveChangesAsync();
             }
 
-            return await _context.AdItems.FindAsync(adItem.Id);
+            return adItem;
         }
     }
 }
