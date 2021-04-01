@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BulletinBoardAPI.Models.Implementations;
 using BulletinBoardAPI.Models.Realizations;
 
 namespace BulletinBoardAPI.Services.Implementation
@@ -9,8 +10,8 @@ namespace BulletinBoardAPI.Services.Implementation
     {
         Task<IEnumerable<Ad>> GetAllAsync();
         Task<Ad> GetAsync(Guid id);
-        void CreateAsync(Ad item);
-        void UpdateAsync(Ad item);
+        Task CreateAsync(Ad item);
+        Task UpdateAsync(Ad item);
         Task<Ad> DeleteAsync(Guid id);
     }
 }

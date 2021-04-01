@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoardAPI.EF
 {
-    public class BulletionBoardContext : DbContext
+    public class BulletinBoardContext : DbContext
     {
-        public BulletionBoardContext(DbContextOptions<BulletionBoardContext> options) : base(options)
+        public BulletinBoardContext(DbContextOptions<BulletinBoardContext> options) : base(options)
         { }
         public DbSet<Ad> AdItems { get; set; }
         public DbSet<User> UserItems { get; set; }

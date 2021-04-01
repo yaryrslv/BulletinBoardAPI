@@ -11,8 +11,8 @@ namespace BulletinBoardAPI.Services.Realization
 {
     public class AdService : IAdService
     {
-        private BulletionBoardContext _context;
-        public AdService(BulletionBoardContext context)
+        private BulletinBoardContext _context;
+        public AdService(BulletinBoardContext context)
         {
             _context = context;
         }
@@ -25,12 +25,12 @@ namespace BulletinBoardAPI.Services.Realization
             return await _context.AdItems.FindAsync(id);
         }
         
-        public async void CreateAsync(Ad item)
+        public async Task CreateAsync(Ad item)
         {
             await _context.AdItems.AddAsync(item);
             await _context.SaveChangesAsync();
         }
-        public async void UpdateAsync(Ad item)
+        public async Task UpdateAsync(Ad item)
         {
             _ = await GetAsync(item.Id);
             Ad currentItem = item;
