@@ -22,9 +22,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await AdService.GetAllAsync();
         }
         [HttpGet("{id}", Name = "GetAd")]
-        public async Task<IActionResult> Get(Guid Id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            Ad ad = await AdService.GetAsync(Id);
+            Ad ad = await AdService.GetAsync(id);
             if (ad == null)
             {
                 return NotFound();
@@ -38,18 +38,18 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return BadRequest();
             }
-            AdService.CreateAsync(ad);
+            await AdService.CreateAsync(ad);
             return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid Id, [FromBody] Ad updatedAd)
+        public async Task<IActionResult> Update(Guid id, [FromBody] Ad updatedAd)
         {
-            if (updatedAd == null || updatedAd.Id != Id)
+            if (updatedAd == null || updatedAd.Id != id)
             {
                 return BadRequest();
             }
 
-            var ad = await AdService.GetAsync(Id);
+            var ad = await AdService.GetAsync(id);
             if (ad == null)
             {
                 return NotFound();
@@ -59,9 +59,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return RedirectToRoute("GetAll");
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid Id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var deletedAd = await AdService.DeleteAsync(Id);
+            var deletedAd = await AdService.DeleteAsync(id);
 
             if (deletedAd == null)
             {
