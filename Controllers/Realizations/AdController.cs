@@ -57,7 +57,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
 
             await _adService.UpdateAsync(updatedAd);
-            return RedirectToRoute("GetAll");
+            return RedirectToRoute("GetAllAds");
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
