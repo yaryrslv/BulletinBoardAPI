@@ -27,14 +27,15 @@ namespace BulletinBoardAPI.Services.Realization
 
         public async Task CreateAsync(User item)
         {
+            item.Id = Guid.NewGuid();
             await _context.UserItems.AddAsync(item);
             await _context.SaveChangesAsync();
         }
-        public async Task UpdateAsync(User item)
+        public async Task UpdateAsync(User user, User updatedUser)
         {
-            _ = await GetAsync(item.Id);
-            User currentItem = item;
-            _context.UserItems.Update(currentItem);
+            user.Name = updatedUser.Name;
+            user.IsAdmin = updatedUser.IsAdmin;
+            _context.UserItems.Update(user);
             await _context.SaveChangesAsync();
         }
 
@@ -49,6 +50,10 @@ namespace BulletinBoardAPI.Services.Realization
             }
 
             return userItem;
+        }
+        public async Task<bool> IsUserNameExistsAsync(string name)
+        {
+            return await _context.UserItems.AnyAsync(i => i.Name == name);
         }
     }
 }

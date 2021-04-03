@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BulletinBoardAPI.Controllers.Implementations
 {
-    interface IAdController
+    public interface IAdController
     {
         Task<IEnumerable<Ad>> GetAll();
         Task<IActionResult> Get(Guid id);

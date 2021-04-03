@@ -1,3 +1,4 @@
+using System;
 using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Implementations;
 using BulletinBoardAPI.Models.Realizations;
@@ -31,8 +32,9 @@ namespace BulletinBoardAPI
             });
             services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddTransient<IAdService, AdService>();
-            services.AddTransient<IAd, Ad>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

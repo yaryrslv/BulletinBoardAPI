@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
+using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +15,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
     public class UserController : ControllerBase, IUserController
     {
         private readonly IUserService _userService;
-        UserController(IUserService userService)
+        private readonly IMapper _mapper;
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
         [HttpGet(Name = "GetAllUsers")]
         public async Task<IEnumerable<User>> GetAll()
@@ -33,30 +37,35 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(user);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] User user)
+        public async Task<IActionResult> Create([FromBody] UserDto userDto)
         {
-            if (user == null)
+            if (userDto == null)
             {
                 return BadRequest();
             }
+
+            if (await _userService.IsUserNameExistsAsync(userDto.Name))
+            {
+                return Conflict();
+            } 
+            var user = _mapper.Map<User>(userDto);
             await _userService.CreateAsync(user);
             return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] User updatedUser)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UserDto updatedUserDto)
         {
-            if (updatedUser == null || updatedUser.Id != id)
+            if (updatedUserDto == null)
             {
                 return BadRequest();
             }
-
             var user = await _userService.GetAsync(id);
-            if (user == null)
+            if (user == null || user.Id != id)
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            await _userService.UpdateAsync(updatedUser);
+            var updatedUser = _mapper.Map<User>(updatedUserDto);
+            await _userService.UpdateAsync(user, updatedUser);
             return RedirectToRoute("GetAllUsers");
         }
         [HttpDelete("{id}")]
