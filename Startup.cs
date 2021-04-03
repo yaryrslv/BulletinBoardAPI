@@ -1,4 +1,6 @@
 using BulletinBoardAPI.EF;
+using BulletinBoardAPI.Models.Implementations;
+using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using BulletinBoardAPI.Services.Realization;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +31,7 @@ namespace BulletinBoardAPI
             });
             services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddTransient<IAdService, AdService>();
+            services.AddTransient<IAd, Ad>();
             services.AddTransient<IUserService, UserService>();
         }
 
