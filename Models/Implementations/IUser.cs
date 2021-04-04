@@ -4,8 +4,8 @@ namespace BulletinBoardAPI.Models.Implementations
 {
     public interface IUser
     {
-        Guid Id { get; set; }
-        string Name { get; set; }
-        bool IsAdmin { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

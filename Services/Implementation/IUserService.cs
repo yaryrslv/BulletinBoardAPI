@@ -13,5 +13,6 @@ namespace BulletinBoardAPI.Services.Implementation
         Task UpdateAsync(User user, User updatedUser);
         Task<User> DeleteAsync(Guid id);
         Task<bool> IsUserNameExistsAsync(string name);
+        Task<User> GetUserByName(string name);
     }
 }

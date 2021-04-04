@@ -55,6 +55,15 @@ namespace BulletinBoardAPI.Services.Realization
         {
             return await _context.UserItems.AnyAsync(i => i.Name == name);
         }
+        public async Task<User> GetUserByName(string name)
+        {
+            if (await IsUserNameExistsAsync(name))
+            {
+                return await _context.UserItems.FirstAsync(i => i.Name == name);
+            }
+
+            return null;
+        }
     }
 }
 

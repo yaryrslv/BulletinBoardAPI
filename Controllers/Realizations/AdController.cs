@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
 using System.Threading.Tasks;
+using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
+using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using Microsoft.AspNetCore.Mvc;
+using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
 
 namespace BulletinBoardAPI.Controllers.Realizations
 {
@@ -13,9 +17,13 @@ namespace BulletinBoardAPI.Controllers.Realizations
     public class AdController : ControllerBase, IAdController
     {
         private readonly IAdService _adService;
-        public AdController(IAdService adService)
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        public AdController(IAdService adService, IUserService userService, IMapper mapper)
         {
             _adService = adService;
+            _userService = userService;
+            _mapper = mapper;
         }
         [HttpGet(Name = "GetAllAds")]
         public async Task<IEnumerable<Ad>> GetAll()
@@ -33,30 +41,41 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(ad);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Ad ad)
+        public async Task<IActionResult> Create([FromBody] AdDto adDto)
         {
-            if (ad == null)
+            if (adDto == null)
             {
                 return BadRequest();
             }
+
+            if (await _userService.IsUserNameExistsAsync(adDto.UserName) == false)
+            {
+                return ValidationProblem();
+            }
+            var ad = _mapper.Map<Ad>(adDto);
+            ad.User = await _userService.GetUserByName(adDto.UserName);
             await _adService.CreateAsync(ad);
-            return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
+            return CreatedAtRoute("GetAd", new { id = ad.Id, user = ad.User}, ad);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] Ad updatedAd)
+        public async Task<IActionResult> Update(Guid id, [FromBody] AdDto updatedAdDto)
         {
-            if (updatedAd == null || updatedAd.Id != id)
+            if (updatedAdDto == null)
+            {
+                return BadRequest();
+            }
+            var ad = await _adService.GetAsync(id);
+            if (ad == null || ad.Id != id)
             {
                 return BadRequest();
             }
 
-            var ad = await _adService.GetAsync(id);
-            if (ad == null)
+            if (ad.User.Name != updatedAdDto.UserName)
             {
-                return NotFound();
+                return Forbid();
             }
-
-            await _adService.UpdateAsync(updatedAd);
+            var updatedAd = _mapper.Map<Ad>(updatedAdDto);
+            await _adService.UpdateAsync(ad, updatedAd);
             return RedirectToRoute("GetAllAds");
         }
         [HttpDelete("{id}")]

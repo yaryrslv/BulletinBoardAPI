@@ -18,23 +18,27 @@ namespace BulletinBoardAPI.Services.Realization
         }
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
-            return await _context.AdItems.Where(i => i != null).ToListAsync();
+            return await _context.AdItems.Include(i => i.User).ToListAsync();
         }
         public async Task<Ad> GetAsync(Guid id)
         {
             return await _context.AdItems.FindAsync(id);
         }
         
-        public async Task CreateAsync(Ad item)
+        public async Task CreateAsync(Ad ad)
         {
-            await _context.AdItems.AddAsync(item);
+            ad.CreateDate = DateTime.Now;
+            ad.ExpirationDite = ad.CreateDate.AddMonths(1);
+            ad.Rating = 0;
+            ad.Number = await GetPostCount();
+            await _context.AdItems.AddAsync(ad);
             await _context.SaveChangesAsync();
         }
-        public async Task UpdateAsync(Ad item)
+        public async Task UpdateAsync(Ad ad, Ad updatedAd)
         {
-            _ = await GetAsync(item.Id);
-            Ad currentItem = item;
-            _context.AdItems.Update(currentItem);
+            ad.Text = updatedAd.Text;
+            ad.ImageUrl = ad.ImageUrl;
+            _context.AdItems.Update(ad);
             await _context.SaveChangesAsync();
         }
 
@@ -49,6 +53,11 @@ namespace BulletinBoardAPI.Services.Realization
             }
 
             return adItem;
+        }
+
+        private async Task<int> GetPostCount()
+        {
+            return await _context.AdItems.CountAsync();
         }
     }
 }

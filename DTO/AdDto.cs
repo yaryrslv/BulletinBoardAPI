@@ -2,8 +2,8 @@
 {
     public class AdDto
     {
-        string UserName { get; set; }
-        string Text { get; set; }
-        string ImageUrl { get; set; }
+        public string UserName { get; set; }
+        public string Text { get; set; }
+        public string ImageUrl { get; set; }
     }
 }
