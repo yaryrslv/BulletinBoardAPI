@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace BulletinBoardAPI.Controllers.Implementations
 {
     public interface IUserController
-    { 
-            Task<IEnumerable<User>> GetAll();
-            Task<IActionResult> Get(Guid id);
-            Task<IActionResult> Create(CreateUserDto createUserDto);
-            Task<IActionResult> Update(Guid id, UserDto updatedUserDto);
-            Task<IActionResult> Delete(Guid id);
-            Task<IActionResult> CreateTokenAsync([FromBody] UserDto userDto);
+    {
+        Task<IActionResult> CreateTokenAsync([FromBody] RegisterUserDto userDto);
+        Task<IActionResult> Register(RegisterUserDto createUserDto);
+        Task<IEnumerable<User>> GetAll();
+        Task<IActionResult> Get(Guid id);
+        Task<IActionResult> Update(Guid id, UserDto updatedUserDto);
+        Task<IActionResult> Delete(Guid id);
     }
 }

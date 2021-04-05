@@ -1,6 +1,4 @@
-﻿using BulletinBoardAPI.Models.Implementations;
-
-namespace BulletinBoardAPI.Models.Realizations
+﻿namespace BulletinBoardAPI.Models.Realizations
 {
     public static class UserRoles
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 
@@ -12,7 +11,7 @@ namespace BulletinBoardAPI.Mapper
             CreateMap<UserDto, User>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role));
-            CreateMap<CreateUserDto, User>()
+            CreateMap<RegisterUserDto, User>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
         }

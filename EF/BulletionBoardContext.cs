@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BulletinBoardAPI.Models.Realizations;
+﻿using BulletinBoardAPI.Models.Realizations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoardAPI.EF

@@ -28,72 +28,31 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _mapper = mapper;
             _config = config;
         }
-        [HttpGet(Name = "GetAllUsers")]
-        public async Task<IEnumerable<User>> GetAll()
-        {
-            return await _userService.GetAllAsync();
-        }
-        [HttpGet("{id}", Name = "GetUser")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            User user = await _userService.GetAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return new ObjectResult(user);
-        }
+        [AllowAnonymous]
+        [Route("register")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateUserDto userDto)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto userDto)
         {
             if (userDto == null)
             {
-                return BadRequest();
+                return BadRequest("Data is null");
             }
 
             if (await _userService.IsUserNameExistsAsync(userDto.Name))
             {
-                return Conflict();
-            } 
+                return Conflict("User already exists");
+            }
             var user = _mapper.Map<User>(userDto);
-            await _userService.CreateAsync(user);
+            await _userService.RegisterAsync(user);
             return CreatedAtRoute("GetUser", new { id = user.Id }, user);
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UserDto updatedUserDto)
-        {
-            if (updatedUserDto == null)
-            {
-                return BadRequest();
-            }
-            var user = await _userService.GetAsync(id);
-            if (user == null || user.Id != id)
-            {
-                return BadRequest();
-            }
-            var updatedUser = _mapper.Map<User>(updatedUserDto);
-            await _userService.UpdateAsync(user, updatedUser);
-            return RedirectToRoute("GetAllUsers");
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var deletedUser = await _userService.DeleteAsync(id);
-
-            if (deletedUser == null)
-            {
-                return BadRequest();
-            }
-
-            return new ObjectResult(deletedUser);
         }
         [AllowAnonymous]
         [Route("token")]
         [HttpPost]
-        public async Task<IActionResult> CreateTokenAsync([FromBody] UserDto userDto)
+        public async Task<IActionResult> CreateTokenAsync([FromBody] RegisterUserDto userDto)
         {
             if (userDto == null) return Unauthorized();
-            string tokenString = string.Empty;
+            string tokenString;
             bool validUser = await AuthenticateAsync(userDto);
             if (validUser)
             {
@@ -101,9 +60,64 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized("Wrong data");
             }
             return Ok(new { Token = tokenString });
+        }
+        [Authorize]
+        [HttpGet(Name = "GetAllUsers")]
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            return await _userService.GetAllAsync();
+        }
+        [Authorize]
+        [HttpGet("{id}", Name = "GetUser")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            User user = await _userService.GetAsync(id);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            return new ObjectResult(user);
+        }
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UserDto updatedUserDto)
+        {
+            //if (updatedUserDto.Role != UserRoles.User && updatedUserDto.Role != UserRoles.Admin)
+            //{
+            //    return BadRequest("Unknown user role");
+            //}
+            var user = await _userService.GetAsync(id);
+            if (user == null || user.Id != id)
+            {
+                return BadRequest("Wrong data");
+            }
+            if (user.Name != updatedUserDto.Name)
+            {
+                if (_userService.GetUserByName(updatedUserDto.Name) != null)
+                {
+                    return BadRequest("This name already exits");
+                }
+            }
+            
+            var updatedUser = _mapper.Map<User>(updatedUserDto);
+            updatedUser = await _userService.UpdateAsync(user, updatedUser);
+            return CreatedAtRoute("GetUser", new { id = updatedUser.Id }, updatedUser);
+        }
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var deletedUser = await _userService.DeleteAsync(id);
+
+            if (deletedUser == null)
+            {
+                return BadRequest("Data is null");
+            }
+
+            return new ObjectResult(deletedUser);
         }
         private string BuildToken()
         {
@@ -118,12 +132,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private async Task<bool> AuthenticateAsync(UserDto userDto)
+        private async Task<bool> AuthenticateAsync(RegisterUserDto userDto)
         {
             bool validUser = false;
 
             var user = await _userService.GetUserByName(userDto.Name);
-            if (user != null)
+            if (user != null && user.Password == _userService.GetHash(userDto.Password))
             {
                 validUser = true;
             }

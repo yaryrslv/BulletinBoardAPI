@@ -18,6 +18,14 @@ namespace BulletinBoardAPI.Services.Realization
         {
             _context = context;
         }
+        public async Task RegisterAsync(User user)
+        {
+            user.Id = Guid.NewGuid();
+            user.Role = UserRoles.User;
+            user.Password = GetHash(user.Password);
+            await _context.UserItems.AddAsync(user);
+            await _context.SaveChangesAsync();
+        }
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.UserItems.Where(i => i != null).ToListAsync();
@@ -27,20 +35,13 @@ namespace BulletinBoardAPI.Services.Realization
             return await _context.UserItems.FindAsync(id);
         }
 
-        public async Task CreateAsync(User user)
-        {
-            user.Id = Guid.NewGuid();
-            user.Role = UserRoles.User;
-            user.Password = GetHash(user.Password);
-            await _context.UserItems.AddAsync(user);
-            await _context.SaveChangesAsync();
-        }
-        public async Task UpdateAsync(User user, User updatedUser)
+        public async Task<User> UpdateAsync(User user, User updatedUser)
         {
             user.Name = updatedUser.Name;
             user.Role = updatedUser.Role;
             _context.UserItems.Update(user);
             await _context.SaveChangesAsync();
+            return user;
         }
 
         public async Task<User> DeleteAsync(Guid id)

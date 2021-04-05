@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 
 namespace BulletinBoardAPI.Services.Implementation
