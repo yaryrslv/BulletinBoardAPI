@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BulletinBoardAPI.Controllers.Realizations
 {
@@ -16,10 +21,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public UserController(IUserService userService, IMapper mapper)
+        private readonly IConfiguration _config;
+        public UserController(IUserService userService, IMapper mapper, IConfiguration config)
         {
             _userService = userService;
             _mapper = mapper;
+            _config = config;
         }
         [HttpGet(Name = "GetAllUsers")]
         public async Task<IEnumerable<User>> GetAll()
@@ -37,7 +44,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(user);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserDto userDto)
+        public async Task<IActionResult> Create([FromBody] CreateUserDto userDto)
         {
             if (userDto == null)
             {
@@ -79,6 +86,48 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
 
             return new ObjectResult(deletedUser);
+        }
+        [AllowAnonymous]
+        [Route("token")]
+        [HttpPost]
+        public async Task<IActionResult> CreateTokenAsync([FromBody] UserDto userDto)
+        {
+            if (userDto == null) return Unauthorized();
+            string tokenString = string.Empty;
+            bool validUser = await AuthenticateAsync(userDto);
+            if (validUser)
+            {
+                tokenString = BuildToken();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+            return Ok(new { Token = tokenString });
+        }
+        private string BuildToken()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtToken:SecretKey"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(_config["JwtToken:Issuer"],
+                _config["JwtToken:Issuer"],
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private async Task<bool> AuthenticateAsync(UserDto userDto)
+        {
+            bool validUser = false;
+
+            var user = await _userService.GetUserByName(userDto.Name);
+            if (user != null)
+            {
+                validUser = true;
+            }
+            return validUser;
         }
     }
 }

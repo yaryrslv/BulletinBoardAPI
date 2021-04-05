@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
@@ -25,16 +27,18 @@ namespace BulletinBoardAPI.Services.Realization
             return await _context.UserItems.FindAsync(id);
         }
 
-        public async Task CreateAsync(User item)
+        public async Task CreateAsync(User user)
         {
-            item.Id = Guid.NewGuid();
-            await _context.UserItems.AddAsync(item);
+            user.Id = Guid.NewGuid();
+            user.Role = UserRoles.User;
+            user.Password = GetHash(user.Password);
+            await _context.UserItems.AddAsync(user);
             await _context.SaveChangesAsync();
         }
         public async Task UpdateAsync(User user, User updatedUser)
         {
             user.Name = updatedUser.Name;
-            user.IsAdmin = updatedUser.IsAdmin;
+            user.Role = updatedUser.Role;
             _context.UserItems.Update(user);
             await _context.SaveChangesAsync();
         }
@@ -63,6 +67,13 @@ namespace BulletinBoardAPI.Services.Realization
             }
 
             return null;
+        }
+
+        public string GetHash(string userPassword)
+        {
+            var md5 = MD5.Create();
+            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(userPassword));
+            return Convert.ToBase64String(hash);
         }
     }
 }

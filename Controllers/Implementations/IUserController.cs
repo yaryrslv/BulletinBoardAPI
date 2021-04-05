@@ -11,8 +11,9 @@ namespace BulletinBoardAPI.Controllers.Implementations
     { 
             Task<IEnumerable<User>> GetAll();
             Task<IActionResult> Get(Guid id);
-            Task<IActionResult> Create(UserDto userDto);
+            Task<IActionResult> Create(CreateUserDto createUserDto);
             Task<IActionResult> Update(Guid id, UserDto updatedUserDto);
             Task<IActionResult> Delete(Guid id);
+            Task<IActionResult> CreateTokenAsync([FromBody] UserDto userDto);
     }
 }

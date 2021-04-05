@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Objects;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
