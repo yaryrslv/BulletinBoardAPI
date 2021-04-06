@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace BulletinBoardAPI.DTO
 {
-    public class UserPutDto
+    public class AdGetByNameDto
     {
-        public string Email{ get; set; }
+        public string Name { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
@@ -17,13 +18,16 @@ namespace BulletinBoardAPI.Services.Realization
         }
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
-            return await _context.AdItems.Include(i => i.User).ToListAsync();
+            return await _context.AdItems.ToListAsync();
+        }
+        public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
+        {
+            return await _context.AdItems.Where(i => i.UserName == name).ToListAsync();
         }
         public async Task<Ad> GetAsync(Guid id)
         {
             return await _context.AdItems.FindAsync(id);
         }
-        
         public async Task CreateAsync(Ad ad)
         {
             ad.CreateDate = DateTime.Now;
@@ -36,22 +40,21 @@ namespace BulletinBoardAPI.Services.Realization
         public async Task UpdateAsync(Ad ad, Ad updatedAd)
         {
             ad.Text = updatedAd.Text;
-            ad.ImageUrl = ad.ImageUrl;
+            ad.ImageUrl = updatedAd.ImageUrl;
             _context.AdItems.Update(ad);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Ad> DeleteAsync(Guid id)
+        public async Task<Ad> DeleteAsync(Ad ad)
         {
-            Ad adItem = await GetAsync(id);
 
-            if (adItem != null)
+            if (ad != null)
             {
-                _context.AdItems.Remove(adItem);
+                _context.AdItems.Remove(ad);
                 await _context.SaveChangesAsync();
             }
 
-            return adItem;
+            return ad;
         }
 
         private async Task<int> GetPostCount()

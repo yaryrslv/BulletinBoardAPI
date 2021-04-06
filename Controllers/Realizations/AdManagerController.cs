@@ -1,43 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using BulletinBoardAPI.Controllers.Implementations;
-using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
 
 namespace BulletinBoardAPI.Controllers.Realizations
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdController : ControllerBase, IAdController
+    public class AdManagerController : ControllerBase, IAdManagerController
     {
         private readonly IAdService _adService;
-        private readonly IMapper _mapper;
-        public AdController(IAdService adService, UserManager<User> userManager, IMapper mapper)
+
+        public AdManagerController(IAdService adService)
         {
             _adService = adService;
-            _mapper = mapper;
         }
-
-        [HttpGet("all", Name = "GetAllAds")]
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("all", Name = "ManagerGetAllAds")]
         public async Task<IEnumerable<Ad>> GetAll()
         {
             return await _adService.GetAllAsync();
         }
-
-        [HttpGet("{name}", Name = "GetAdByName")]
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("{name}", Name = "ManagerGetAdByName")]
         public async Task<IEnumerable<Ad>> GetByName(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
-        [Authorize]
-        [HttpGet("{id}", Name = "GetAd")]
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("{id}", Name = "ManagerGetAd")]
         public async Task<IActionResult> Get(Guid id)
         {
             Ad ad = await _adService.GetAsync(id);
@@ -47,11 +41,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(ad);
         }
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("new")]
-        public async Task<IActionResult> Create([FromBody] AdDto adDto)
+        public async Task<IActionResult> Create([FromBody] Ad ad)
         {
-            if (adDto == null)
+            if (ad == null)
             {
                 return BadRequest();
             }
@@ -61,16 +55,15 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return Unauthorized();
             }
-            var ad = _mapper.Map<Ad>(adDto);
             ad.UserName = userName;
             await _adService.CreateAsync(ad);
-            return CreatedAtRoute("GetAd", new { id = ad.Id}, ad);
+            return CreatedAtRoute("ManagerGetAd", new { id = ad.Id }, ad);
         }
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] AdDto updatedAdDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] Ad updatedAd)
         {
-            if (updatedAdDto == null)
+            if (updatedAd == null)
             {
                 return NotFound("Ad for update not found");
             }
@@ -79,16 +72,10 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return BadRequest();
             }
-
-            if (HttpContext.User.Identity.Name != ad.UserName)
-            {
-                return BadRequest("Users don't match");
-            }
-            var updatedAd = _mapper.Map<Ad>(updatedAdDto);
             await _adService.UpdateAsync(ad, updatedAd);
-            return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
+            return CreatedAtRoute("ManagerGetAd", new { id = ad.Id }, ad);
         }
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -96,10 +83,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
             if (adForDelete == null)
             {
                 return NotFound("Ad for delete not found");
-            }
-            if (HttpContext.User.Identity.Name != adForDelete.UserName)
-            {
-                return BadRequest("Users don't match");
             }
             var deletedAd = await _adService.DeleteAsync(adForDelete);
 

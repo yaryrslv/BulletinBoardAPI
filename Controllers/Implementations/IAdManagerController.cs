@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulletinBoardAPI.Controllers.Implementations
+namespace BulletinBoardAPI.Controllers.Realizations
 {
-    public interface IAdController
+    public interface IAdManagerController
     {
         Task<IEnumerable<Ad>> GetAll();
         Task<IEnumerable<Ad>> GetByName(string name);
         Task<IActionResult> Get(Guid id);
-        Task<IActionResult> Create([FromBody] AdDto adDto);
-        Task<IActionResult> Update(Guid id, [FromBody] AdDto updatedAdDto);
+        Task<IActionResult> Create([FromBody] Ad ad);
+        Task<IActionResult> Update(Guid id, [FromBody] Ad updatedAd);
         Task<IActionResult> Delete(Guid id);
     }
 }

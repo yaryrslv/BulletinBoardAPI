@@ -5,9 +5,10 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO;
-using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : ControllerBase, IUserController
     {
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
@@ -35,6 +36,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _roleManager = roleManager;
         }
         [HttpPost]
+        [AllowAnonymous]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
         {
@@ -73,59 +75,78 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return Unauthorized();
         }
         [HttpPost]
+        [AllowAnonymous]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
         {
-            var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-            User user = new User()
+            if (await _userManager.Users.CountAsync() > 0)
             {
-                Email = userRegisterDto.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = userRegisterDto.Username
-            };
-            var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
+                var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
+                if (userExists != null)
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new Response {Status = "Error", Message = "User already exists!"});
 
-            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
+                User user = new User()
+                {
+                    Email = userRegisterDto.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = userRegisterDto.Username
+                };
+                var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
+                if (!result.Succeeded)
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new Response {Status = "Error", Message = result.ToString()});
+                user.EmailConfirmed = true;
+                return CreatedAtRoute("GetUser", new {id = user.Id}, user);
+            }
+            else
+            {
+                return BadRequest("User registeradmin for create administrator account");
+            }
         }
         [HttpPost]
+        [AllowAnonymous]
         [Route("registeradmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] UserRegisterDto userRegisterDto)
         {
-            var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-            User user = new User()
+            if (await _userManager.Users.CountAsync() == 0)
             {
-                Email = userRegisterDto.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = userRegisterDto.Username
-            };
-            var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
+                var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
+                if (userExists != null)
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                User user = new User()
+                {
+                    Email = userRegisterDto.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = userRegisterDto.Username
+                };
+                var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
+                if (!result.Succeeded)
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+                if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+                if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+                }
+                user.EmailConfirmed = true;
+                return CreatedAtRoute("GetUser", new { id = user.Id }, user);
             }
-            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
+            return BadRequest("Administrator has already been created");
         }
-        [HttpGet(Name = "GetAllUsers")]
-        public async Task<IEnumerable<User>> GetAll()
+        [Authorize]
+        [HttpGet("all", Name = "GetAllUsers")]
+        public async Task<IEnumerable<UserGetDto>> GetAll()
         {
-            return await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
+            return _mapper.Map<IEnumerable<UserGetDto>>(users);
         }
+        [Authorize]
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> Get(string id)
         {
@@ -134,42 +155,69 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("User not found");
             }
-            
-            return new ObjectResult(user);
+
+            var response = _mapper.Map<UserGetDto>(user);
+            return new ObjectResult(response);
         }
+        [Authorize]
+        [HttpGet("{username}", Name = "GetUserByName")]
+        public async Task<IActionResult> GetByName(string userName)
+        {
+            User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var response = _mapper.Map<UserGetDto>(user);
+            return new ObjectResult(response);
+        }
+        [Authorize]
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UserPutDto userPutDto)
+        public async Task<IActionResult> Update([FromBody] UserUpdateDto userPutDto)
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == String.Empty)
             {
-                return BadRequest("Token not found");
+                return NotFound("Token not found");
             }
-            
-            var userName = HttpContext.User.Identity.Name;
+
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName == null)
+            {
+                return NotFound("Current user not found");
+            }
             User user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return BadRequest("User is null");
+            }
             if (!IsValidEmail(userPutDto.Email))
             {
                 return NotFound("Invalid Email");
             }
-
-            user.Email = userPutDto.Email;
-            return Ok("Email changed");
+            var response = await _userManager.SetEmailAsync(user, userPutDto.Email);
+            return new ObjectResult(response);
         }
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete()
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == String.Empty)
             {
-                return BadRequest("Token not found");
+                return NotFound("Token not found");
             }
 
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName == null)
+            {
+                return NotFound("Current user not found");
+            }
             User user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
-                return BadRequest("User not found");
+                return NotFound("User not found");
             }
             var response = await _userManager.DeleteAsync(user);
             return new ObjectResult(response);
