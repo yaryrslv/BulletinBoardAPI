@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

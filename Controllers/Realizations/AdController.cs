@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
 
@@ -19,7 +19,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
     {
         private readonly IAdService _adService;
         private readonly IMapper _mapper;
-        public AdController(IAdService adService, UserManager<User> userManager, IMapper mapper)
+        public AdController(IAdService adService, IMapper mapper)
         {
             _adService = adService;
             _mapper = mapper;

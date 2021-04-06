@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
 

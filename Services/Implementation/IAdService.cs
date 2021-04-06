@@ -12,6 +12,6 @@ namespace BulletinBoardAPI.Services.Implementation
         Task<Ad> GetAsync(Guid id);
         Task CreateAsync(Ad ad);
         Task UpdateAsync(Ad ad, Ad updatedAd);
-        Task<Ad> DeleteAsync(Ad id);
+        Task<Ad> DeleteAsync(Ad ad);
     }
 }

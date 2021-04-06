@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.DTO
+﻿namespace BulletinBoardAPI.DTO.User
 {
     public class UserGetDto
     {

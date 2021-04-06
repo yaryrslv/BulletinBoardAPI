@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 
 namespace BulletinBoardAPI.Mapper
