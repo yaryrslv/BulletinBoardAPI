@@ -1,9 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Principal;
 using BulletinBoardAPI.Models.Implementations;
+using IdentityModel;
 
 namespace BulletinBoardAPI.Models.Realizations
 {
-    public class Ad : IAd
+    public class Ad
     {
         public Guid Id { get; set; }
         public int Number { get; set; }

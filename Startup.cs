@@ -1,11 +1,14 @@
 using System;
 using System.Text;
 using BulletinBoardAPI.EF;
+using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using BulletinBoardAPI.Services.Realization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +42,7 @@ namespace BulletinBoardAPI
                     ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Configuration["JwtToken:Issuer"],
-                    ValidAudience = Configuration["JwtToken:Issuer"],
+                    ValidAudience = Configuration["JwtToken:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken:SecretKey"])) //Configuration["JwtToken:SecretKey"]
                 };
             });
@@ -77,8 +80,16 @@ namespace BulletinBoardAPI
             });
 
             services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<BulletinBoardContext>()
+                .AddDefaultTokenProviders();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            });
             services.AddTransient<IAdService, AdService>();
-            services.AddScoped<IUserService, UserService>();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }

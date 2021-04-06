@@ -1,13 +1,13 @@
-﻿using System;
-using BulletinBoardAPI.Models.Implementations;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace BulletinBoardAPI.Models.Realizations
 {
-    public class User : IUser
+    public class User : IdentityUser
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public static implicit operator string(User v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

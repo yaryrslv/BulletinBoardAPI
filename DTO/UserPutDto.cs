@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace BulletinBoardAPI.DTO
 {
-    public class RegisterUserDto
+    public class UserPutDto
     {
-        public string Name { get; set; }
-
-        public string Password { get; set; }
+        public string Email{ get; set; }
     }
 }

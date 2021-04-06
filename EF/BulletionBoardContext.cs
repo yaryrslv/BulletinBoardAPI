@@ -1,13 +1,19 @@
 ﻿using BulletinBoardAPI.Models.Realizations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoardAPI.EF
 {
-    public class BulletinBoardContext : DbContext
+    public class BulletinBoardContext : IdentityDbContext<User>
     {
-        public BulletinBoardContext(DbContextOptions<BulletinBoardContext> options) : base(options)
-        { }
         public DbSet<Ad> AdItems { get; set; }
-        public DbSet<User> UserItems { get; set; }
+        public BulletinBoardContext(DbContextOptions<BulletinBoardContext> options) : base(options)
+        {
+
+        }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }

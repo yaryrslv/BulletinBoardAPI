@@ -9,11 +9,10 @@ namespace BulletinBoardAPI.Controllers.Implementations
 {
     public interface IUserController
     {
-        Task<IActionResult> CreateTokenAsync([FromBody] RegisterUserDto userDto);
-        Task<IActionResult> Register(RegisterUserDto createUserDto);
+        Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto);
+        Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto);
         Task<IEnumerable<User>> GetAll();
-        Task<IActionResult> Get(Guid id);
-        Task<IActionResult> Update(Guid id, UserDto updatedUserDto);
-        Task<IActionResult> Delete(Guid id);
+        Task<IActionResult> Get(string id);
+        Task<IActionResult> Delete(string id);
     }
 }

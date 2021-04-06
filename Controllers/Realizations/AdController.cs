@@ -16,12 +16,10 @@ namespace BulletinBoardAPI.Controllers.Realizations
     public class AdController : ControllerBase, IAdController
     {
         private readonly IAdService _adService;
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public AdController(IAdService adService, IUserService userService, IMapper mapper)
+        public AdController(IAdService adService, IMapper mapper)
         {
             _adService = adService;
-            _userService = userService;
             _mapper = mapper;
         }
         [HttpGet(Name = "GetAllAds")]
@@ -47,12 +45,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 return BadRequest();
             }
 
-            if (await _userService.IsUserNameExistsAsync(adDto.UserName) == false)
-            {
-                return ValidationProblem();
-            }
             var ad = _mapper.Map<Ad>(adDto);
-            ad.User = await _userService.GetUserByName(adDto.UserName);
             await _adService.CreateAsync(ad);
             return CreatedAtRoute("GetAd", new { id = ad.Id, user = ad.User}, ad);
         }
@@ -69,10 +62,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 return BadRequest();
             }
 
-            if (ad.User.Name != updatedAdDto.UserName)
-            {
-                return Forbid();
-            }
             var updatedAd = _mapper.Map<Ad>(updatedAdDto);
             await _adService.UpdateAsync(ad, updatedAd);
             return RedirectToRoute("GetAllAds");

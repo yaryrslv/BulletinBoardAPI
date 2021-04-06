@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Implementation;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,131 +19,172 @@ namespace BulletinBoardAPI.Controllers.Realizations
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase, IUserController
+    public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
-        public UserController(IUserService userService, IMapper mapper, IConfiguration config)
-        {
-            _userService = userService;
-            _mapper = mapper;
-            _config = config;
-        }
-        [AllowAnonymous]
-        [Route("register")]
-        [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUserDto userDto)
-        {
-            if (userDto == null)
-            {
-                return BadRequest("Data is null");
-            }
+        private readonly IConfiguration _configuration;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-            if (await _userService.IsUserNameExistsAsync(userDto.Name))
+        public UserController(IMapper mapper, IConfiguration configuration, 
+            UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            _mapper = mapper;
+            _configuration = configuration;
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
+        {
+            var user = await _userManager.FindByNameAsync(userLoginDto.Username);
+            if (user != null && await _userManager.CheckPasswordAsync(user, userLoginDto.Password))
             {
-                return Conflict("User already exists");
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                }
+
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTToken:SecretKey"]));
+
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWTToken:Issuer"],
+                    audience: _configuration["JWTToken:Audience"],
+                    expires: DateTime.Now.AddHours(3),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                });
             }
-            var user = _mapper.Map<User>(userDto);
-            await _userService.RegisterAsync(user);
+            return Unauthorized();
+        }
+        [HttpPost]
+        [Route("register")]
+        public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
+        {
+            var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+            User user = new User()
+            {
+                Email = userRegisterDto.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = userRegisterDto.Username
+            };
+            var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
+            if (!result.Succeeded)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
+
             return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
-        [AllowAnonymous]
-        [Route("token")]
         [HttpPost]
-        public async Task<IActionResult> CreateTokenAsync([FromBody] RegisterUserDto userDto)
+        [Route("registeradmin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] UserRegisterDto userRegisterDto)
         {
-            if (userDto == null) return Unauthorized();
-            string tokenString;
-            bool validUser = await AuthenticateAsync(userDto);
-            if (validUser)
+            var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+            User user = new User()
             {
-                tokenString = BuildToken();
-            }
-            else
+                Email = userRegisterDto.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = userRegisterDto.Username
+            };
+            var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
+            if (!result.Succeeded)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
+
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
             {
-                return Unauthorized("Wrong data");
+                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
             }
-            return Ok(new { Token = tokenString });
+            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
-        [Authorize]
         [HttpGet(Name = "GetAllUsers")]
         public async Task<IEnumerable<User>> GetAll()
         {
-            return await _userService.GetAllAsync();
+            return await _userManager.Users.ToListAsync();
         }
-        [Authorize]
         [HttpGet("{id}", Name = "GetUser")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> Get(string id)
         {
-            User user = await _userService.GetAsync(id);
+            User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
             if (user == null)
             {
                 return NotFound("User not found");
             }
+            
             return new ObjectResult(user);
         }
-        [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UserDto updatedUserDto)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UserPutDto userPutDto)
         {
-            //if (updatedUserDto.Role != UserRoles.User && updatedUserDto.Role != UserRoles.Admin)
-            //{
-            //    return BadRequest("Unknown user role");
-            //}
-            var user = await _userService.GetAsync(id);
-            if (user == null || user.Id != id)
+            var userToken = HttpContext.Request.Headers["Authorization"].ToString();
+            if (userToken == String.Empty)
             {
-                return BadRequest("Wrong data");
-            }
-            if (user.Name != updatedUserDto.Name)
-            {
-                if (_userService.GetUserByName(updatedUserDto.Name) != null)
-                {
-                    return BadRequest("This name already exits");
-                }
+                return BadRequest("Token not found");
             }
             
-            var updatedUser = _mapper.Map<User>(updatedUserDto);
-            updatedUser = await _userService.UpdateAsync(user, updatedUser);
-            return CreatedAtRoute("GetUser", new { id = updatedUser.Id }, updatedUser);
-        }
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var deletedUser = await _userService.DeleteAsync(id);
-
-            if (deletedUser == null)
+            var userName = HttpContext.User.Identity.Name;
+            User user = await _userManager.FindByNameAsync(userName);
+            if (!IsValidEmail(userPutDto.Email))
             {
-                return BadRequest("Data is null");
+                return NotFound("Invalid Email");
             }
 
-            return new ObjectResult(deletedUser);
+            user.Email = userPutDto.Email;
+            return Ok("Email changed");
         }
-        private string BuildToken()
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtToken:SecretKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(_config["JwtToken:Issuer"],
-                _config["JwtToken:Issuer"],
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private async Task<bool> AuthenticateAsync(RegisterUserDto userDto)
-        {
-            bool validUser = false;
-
-            var user = await _userService.GetUserByName(userDto.Name);
-            if (user != null && user.Password == _userService.GetHash(userDto.Password))
+            var userToken = HttpContext.Request.Headers["Authorization"].ToString();
+            if (userToken == String.Empty)
             {
-                validUser = true;
+                return BadRequest("Token not found");
             }
-            return validUser;
+
+            var userName = HttpContext.User.Identity.Name;
+            User user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+            var response = await _userManager.DeleteAsync(user);
+            return new ObjectResult(response);
+        }
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
