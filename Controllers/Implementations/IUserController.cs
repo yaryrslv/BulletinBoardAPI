@@ -8,13 +8,13 @@ namespace BulletinBoardAPI.Controllers.Implementations
 {
     public interface IUserController
     {
-        Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto);
-        Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto);
-        Task<IActionResult> RegisterAdmin([FromBody] UserRegisterDto userRegisterDto);
-        Task<IEnumerable<UserGetDto>> GetAll();
-        Task<IActionResult> Get(string id);
-        Task<IActionResult> GetByName(string userName);
-        Task<IActionResult> Update([FromBody] UserUpdateDto userPutDto);
-        Task<IActionResult> Delete();
+        Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLoginDto);
+        Task<IActionResult> RegisterAsync([FromBody] UserRegisterDto userRegisterDto);
+        Task<IActionResult> RegisterAdminAsync([FromBody] UserRegisterDto userRegisterDto);
+        Task<IEnumerable<UserGetDto>> GetAllAsync();
+        Task<IActionResult> GetAsync(string id);
+        Task<IActionResult> GetByNameAsync(string userName);
+        Task<IActionResult> UpdateAsync([FromBody] UserUpdateDto userPutDto);
+        Task<IActionResult> DeleteAsync();
     }
 }

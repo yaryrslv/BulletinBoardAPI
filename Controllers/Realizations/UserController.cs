@@ -39,7 +39,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
+        public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLoginDto)
         {
             var user = await _userManager.FindByNameAsync(userLoginDto.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, userLoginDto.Password))
@@ -78,7 +78,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterDto userRegisterDto)
         {
             if (await _userManager.Users.CountAsync() > 0)
             {
@@ -108,7 +108,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         [HttpPost]
         [AllowAnonymous]
         [Route("registeradmin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] UserRegisterDto userRegisterDto)
+        public async Task<IActionResult> RegisterAdminAsync([FromBody] UserRegisterDto userRegisterDto)
         {
             if (await _userManager.Users.CountAsync() == 0)
             {
@@ -142,14 +142,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpGet("all", Name = "GetAllUsers")]
-        public async Task<IEnumerable<UserGetDto>> GetAll()
+        public async Task<IEnumerable<UserGetDto>> GetAllAsync()
         {
             var users = await _userManager.Users.ToListAsync();
             return _mapper.Map<IEnumerable<UserGetDto>>(users);
         }
         [Authorize]
         [HttpGet("{id}", Name = "GetUser")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> GetAsync(string id)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
             if (user == null)
@@ -162,7 +162,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpGet("{username}", Name = "GetUserByName")]
-        public async Task<IActionResult> GetByName(string userName)
+        public async Task<IActionResult> GetByNameAsync(string userName)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);
             if (user == null)
@@ -175,7 +175,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UserUpdateDto userPutDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UserUpdateDto userPutDto)
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == String.Empty)
@@ -202,7 +202,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpDelete]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> DeleteAsync()
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == String.Empty)

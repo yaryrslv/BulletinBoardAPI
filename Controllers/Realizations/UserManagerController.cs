@@ -21,14 +21,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _userManager = userManager;
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpGet(Name = "ManagerGetAll")]
-        public async Task<IEnumerable<User>> GetAll()
+        [HttpGet("all", Name = "ManagerGetAll")]
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _userManager.Users.ToListAsync();
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}", Name = "ManagerGetUser")]
-        public async Task<IActionResult> GetFull(string id)
+        public async Task<IActionResult> GetFullAsync(string id)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
             if (user == null)
@@ -37,9 +37,20 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(user);
         }
+        [Authorize]
+        [HttpGet("{username}", Name = "ManagerGetUserByName")]
+        public async Task<IActionResult> GetByNameAsync(string userName)
+        {
+            User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            return new ObjectResult(user);
+        }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost]
-        public async Task<IActionResult> UpdateRole(string id, [FromBody] UserManagerUpdateRoleDto updated)
+        [HttpPost("new")]
+        public async Task<IActionResult> UpdateRoleAsync(string id, [FromBody] UserManagerUpdateRoleDto updated)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -55,9 +66,8 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [Authorize(Roles = UserRoles.Admin)]
         [HttpPut]
-        public async Task<IActionResult> UpdateEMail(string id, [FromBody] User updatedUser)
+        public async Task<IActionResult> UpdateEMailAsync(string id, [FromBody] User updatedUser)
         {
             var currentUser = await _userManager.FindByIdAsync(id);
             if (currentUser == null)
@@ -67,8 +77,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.UpdateAsync(currentUser);
             return new ObjectResult(response);
         }
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)

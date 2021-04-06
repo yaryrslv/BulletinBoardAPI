@@ -8,11 +8,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
 {
     public interface IAdManagerController
     {
-        Task<IEnumerable<Ad>> GetAll();
-        Task<IEnumerable<Ad>> GetByName(string name);
-        Task<IActionResult> Get(Guid id);
-        Task<IActionResult> Create([FromBody] Ad ad);
-        Task<IActionResult> Update(Guid id, [FromBody] Ad updatedAd);
-        Task<IActionResult> Delete(Guid id);
+        Task<IEnumerable<Ad>> GetAllAsync();
+        Task<IEnumerable<Ad>> GetByNameAsync(string name);
+        Task<IActionResult> GetAsync(Guid id);
+        Task<IActionResult> CreateAsync([FromBody] Ad ad);
+        Task<IActionResult> UpdateAsync(Guid id, [FromBody] Ad updatedAd);
+        Task<IActionResult> DeleteAsync(Guid id);
     }
 }

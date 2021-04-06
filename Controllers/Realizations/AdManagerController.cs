@@ -20,19 +20,19 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("all", Name = "ManagerGetAllAds")]
-        public async Task<IEnumerable<Ad>> GetAll()
+        public async Task<IEnumerable<Ad>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{name}", Name = "ManagerGetAdByName")]
-        public async Task<IEnumerable<Ad>> GetByName(string name)
+        public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}", Name = "ManagerGetAd")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetAsync(Guid id)
         {
             Ad ad = await _adService.GetAsync(id);
             if (ad == null)
@@ -43,7 +43,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("new")]
-        public async Task<IActionResult> Create([FromBody] Ad ad)
+        public async Task<IActionResult> CreateAsync([FromBody] Ad ad)
         {
             if (ad == null)
             {
@@ -61,7 +61,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] Ad updatedAd)
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Ad updatedAd)
         {
             if (updatedAd == null)
             {
@@ -77,7 +77,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var adForDelete = await _adService.GetAsync(id);
             if (adForDelete == null)

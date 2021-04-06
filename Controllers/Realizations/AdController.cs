@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
-using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
@@ -26,19 +25,19 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
 
         [HttpGet("all", Name = "GetAllAds")]
-        public async Task<IEnumerable<Ad>> GetAll()
+        public async Task<IEnumerable<Ad>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
         }
 
         [HttpGet("{name}", Name = "GetAdByName")]
-        public async Task<IEnumerable<Ad>> GetByName(string name)
+        public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
         [Authorize]
         [HttpGet("{id}", Name = "GetAd")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetAsync(Guid id)
         {
             Ad ad = await _adService.GetAsync(id);
             if (ad == null)
@@ -49,7 +48,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpPost("new")]
-        public async Task<IActionResult> Create([FromBody] AdDto adDto)
+        public async Task<IActionResult> CreateAsync([FromBody] AdDto adDto)
         {
             if (adDto == null)
             {
@@ -68,7 +67,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] AdDto updatedAdDto)
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto)
         {
             if (updatedAdDto == null)
             {
@@ -90,7 +89,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         }
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var adForDelete = await _adService.GetAsync(id);
             if (adForDelete == null)
