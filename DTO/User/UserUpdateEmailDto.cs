@@ -1,6 +1,6 @@
 ﻿namespace BulletinBoardAPI.DTO
 {
-    public class UserUpdateDto
+    public class UserUpdateEmailDto
     {
         public string Email{ get; set; }
     }

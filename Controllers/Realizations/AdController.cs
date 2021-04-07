@@ -30,13 +30,13 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _adService.GetAllAsync();
         }
 
-        [HttpGet("{name}", Name = "GetAdByName")]
+        [HttpGet("getbyusername/{name}", Name = "GetAdByName")]
         public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
         [Authorize]
-        [HttpGet("{id}", Name = "GetAd")]
+        [HttpGet("getbyadid/{id}", Name = "GetAd")]
         public async Task<IActionResult> GetAsync(Guid id)
         {
             Ad ad = await _adService.GetAsync(id);

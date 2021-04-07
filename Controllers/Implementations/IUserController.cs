@@ -14,7 +14,7 @@ namespace BulletinBoardAPI.Controllers.Implementations
         Task<IEnumerable<UserGetDto>> GetAllAsync();
         Task<IActionResult> GetAsync(string id);
         Task<IActionResult> GetByNameAsync(string userName);
-        Task<IActionResult> UpdateAsync([FromBody] UserUpdateDto userPutDto);
+        Task<IActionResult> UpdateEmailAsync([FromBody] UserUpdateEmailDto userPutDto);
         Task<IActionResult> DeleteAsync();
     }
 }

@@ -27,7 +27,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _userManager.Users.ToListAsync();
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpGet("{id}", Name = "ManagerGetUser")]
+        [HttpGet("getbyid/{id}", Name = "ManagerGetUser")]
         public async Task<IActionResult> GetFullAsync(string id)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
@@ -38,7 +38,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(user);
         }
         [Authorize]
-        [HttpGet("{username}", Name = "ManagerGetUserByName")]
+        [HttpGet("getbyusername/{username}", Name = "ManagerGetUserByName")]
         public async Task<IActionResult> GetByNameAsync(string userName)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);

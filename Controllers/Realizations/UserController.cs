@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -148,7 +149,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return _mapper.Map<IEnumerable<UserGetDto>>(users);
         }
         [Authorize]
-        [HttpGet("{id}", Name = "GetUser")]
+        [HttpGet("getbyid/{id}", Name = "GetUser")]
         public async Task<IActionResult> GetAsync(string id)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
@@ -161,7 +162,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize]
-        [HttpGet("{username}", Name = "GetUserByName")]
+        [HttpGet("getbyusername/{username}", Name = "GetUserByName")]
         public async Task<IActionResult> GetByNameAsync(string userName)
         {
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);
@@ -174,15 +175,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] UserUpdateDto userPutDto)
+        [HttpPut("updateemail")]
+        public async Task<IActionResult> UpdateEmailAsync([FromBody] UserUpdateEmailDto userUpdateEMailDto)
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == String.Empty)
             {
                 return NotFound("Token not found");
             }
-
             var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
@@ -193,11 +193,38 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return BadRequest("User is null");
             }
-            if (!IsValidEmail(userPutDto.Email))
+            if (!IsValidEmail(userUpdateEMailDto.Email))
             {
                 return NotFound("Invalid Email");
             }
-            var response = await _userManager.SetEmailAsync(user, userPutDto.Email);
+            var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
+            var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
+            //var response = await _userManager.SetEmailAsync(user, userUpdateEMailDto.Email);
+            return new ObjectResult(response);
+            
+        }
+        [Authorize]
+        [HttpPut("updatepassword")]
+        public async Task<IActionResult> UpdatePasswordAsync([FromBody] UserUpdatePasswordDto userUpdatePasswordDto)
+        {
+            var userToken = HttpContext.Request.Headers["Authorization"].ToString();
+            if (userToken == String.Empty)
+            {
+                return NotFound("Token not found");
+            }
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName == null)
+            {
+                return NotFound("Current user not found");
+            }
+            User user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return BadRequest("User is null");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var response = await _userManager.ResetPasswordAsync(user, 
+                token, userUpdatePasswordDto.NewPassword);
             return new ObjectResult(response);
         }
         [Authorize]
@@ -209,7 +236,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("Token not found");
             }
-
             var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
