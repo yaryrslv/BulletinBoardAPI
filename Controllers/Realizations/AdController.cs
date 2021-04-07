@@ -36,10 +36,16 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _adService.GetAllActualAsync();
         }
         [Authorize]
-        [HttpGet("getbyusername/{name}", Name = "GetAdByName")]
+        [HttpGet("getbyusername/{name}", Name = "GetAdsByName")]
         public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
+        }
+        [Authorize]
+        [HttpGet("getactualbyusername/{name}", Name = "GetActualAdsByName")]
+        public async Task<IEnumerable<Ad>> GetActualByNameAsync(string name)
+        {
+            return await _adService.GetActualByNameAsync(name);
         }
         [Authorize]
         [HttpGet("getbyadid/{id}", Name = "GetAd")]

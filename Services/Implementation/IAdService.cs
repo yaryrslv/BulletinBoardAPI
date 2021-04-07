@@ -10,6 +10,7 @@ namespace BulletinBoardAPI.Services.Implementation
         Task<IEnumerable<Ad>> GetAllAsync();
         Task<IEnumerable<Ad>> GetAllActualAsync();
         Task<IEnumerable<Ad>> GetByNameAsync(string name);
+        Task<IEnumerable<Ad>> GetActualByNameAsync(string name);
         Task<Ad> GetAsync(Guid id);
         Task CreateAsync(Ad ad);
         Task UpdateAsync(Ad ad);

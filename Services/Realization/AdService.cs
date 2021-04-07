@@ -28,6 +28,11 @@ namespace BulletinBoardAPI.Services.Realization
         {
             return await _context.AdItems.Where(i => i.UserName == name).ToListAsync();
         }
+        public async Task<IEnumerable<Ad>> GetActualByNameAsync(string name)
+        {
+            return await _context.AdItems.Where(i => i.UserName == name)
+                .Where(i => i.ExpirationDite > DateTime.Now).ToListAsync();
+        }
         public async Task<Ad> GetAsync(Guid id)
         {
             return await _context.AdItems.FindAsync(id);
