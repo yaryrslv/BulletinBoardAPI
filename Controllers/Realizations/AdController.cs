@@ -23,13 +23,19 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _adService = adService;
             _mapper = mapper;
         }
-
+        [Authorize]
         [HttpGet("all", Name = "GetAllAds")]
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
         }
-
+        [Authorize]
+        [HttpGet("allactual", Name = "GetAllActualAds")]
+        public async Task<IEnumerable<Ad>> GetAllActualAsync()
+        {
+            return await _adService.GetAllActualAsync();
+        }
+        [Authorize]
         [HttpGet("getbyusername/{name}", Name = "GetAdByName")]
         public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
@@ -39,7 +45,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         [HttpGet("getbyadid/{id}", Name = "GetAd")]
         public async Task<IActionResult> GetAsync(Guid id)
         {
-            Ad ad = await _adService.GetAsync(id);
+            var ad = await _adService.GetAsync(id);
             if (ad == null)
             {
                 return NotFound();
@@ -55,7 +61,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 return BadRequest();
             }
 
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
                 return Unauthorized();
@@ -79,12 +85,13 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 return BadRequest();
             }
 
-            if (HttpContext.User.Identity.Name != ad.UserName)
+            if (HttpContext.User.Identity?.Name != ad.UserName)
             {
                 return BadRequest("Users don't match");
             }
-            var updatedAd = _mapper.Map<Ad>(updatedAdDto);
-            await _adService.UpdateAsync(ad, updatedAd);
+
+            ad = _mapper.Map(updatedAdDto, ad);
+            await _adService.UpdateAsync(ad);
             return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
         }
         [Authorize]
@@ -96,7 +103,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("Ad for delete not found");
             }
-            if (HttpContext.User.Identity.Name != adForDelete.UserName)
+            if (HttpContext.User.Identity?.Name != adForDelete.UserName)
             {
                 return BadRequest("Users don't match");
             }

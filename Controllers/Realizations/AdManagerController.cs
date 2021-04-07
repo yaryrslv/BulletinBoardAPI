@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using Microsoft.AspNetCore.Authorization;
@@ -50,7 +51,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 return BadRequest();
             }
 
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
                 return Unauthorized();
@@ -67,13 +68,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("Ad for update not found");
             }
-            var ad = await _adService.GetAsync(id);
-            if (ad == null || ad.Id != id)
+            if (updatedAd == null || updatedAd.Id != id)
             {
                 return BadRequest();
             }
-            await _adService.UpdateAsync(ad, updatedAd);
-            return CreatedAtRoute("ManagerGetAd", new { id = ad.Id }, ad);
+            await _adService.UpdateAsync(updatedAd);
+            return CreatedAtRoute("ManagerGetAd", new { id = updatedAd.Id }, updatedAd);
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]

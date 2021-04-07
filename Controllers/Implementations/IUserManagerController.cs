@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
 

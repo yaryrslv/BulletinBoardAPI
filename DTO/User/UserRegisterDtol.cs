@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BulletinBoardAPI.DTO
+namespace BulletinBoardAPI.DTO.User
 {
     public class UserRegisterDto
     {

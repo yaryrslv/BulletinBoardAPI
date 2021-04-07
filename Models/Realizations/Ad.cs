@@ -1,9 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Principal;
-using BulletinBoardAPI.Models.Implementations;
-using IdentityModel;
 
 namespace BulletinBoardAPI.Models.Realizations
 {

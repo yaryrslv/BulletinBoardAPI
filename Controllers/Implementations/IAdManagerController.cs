@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulletinBoardAPI.Controllers.Realizations
+namespace BulletinBoardAPI.Controllers.Implementations
 {
     public interface IAdManagerController
     {

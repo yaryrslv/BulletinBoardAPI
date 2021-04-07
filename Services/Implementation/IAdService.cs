@@ -8,10 +8,11 @@ namespace BulletinBoardAPI.Services.Implementation
     public interface IAdService
     {
         Task<IEnumerable<Ad>> GetAllAsync();
+        Task<IEnumerable<Ad>> GetAllActualAsync();
         Task<IEnumerable<Ad>> GetByNameAsync(string name);
         Task<Ad> GetAsync(Guid id);
         Task CreateAsync(Ad ad);
-        Task UpdateAsync(Ad ad, Ad updatedAd);
+        Task UpdateAsync(Ad ad);
         Task<Ad> DeleteAsync(Ad ad);
     }
 }

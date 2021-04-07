@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO;
+using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

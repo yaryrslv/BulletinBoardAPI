@@ -11,9 +11,5 @@ namespace BulletinBoardAPI.EF
         {
 
         }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
     }
 }
