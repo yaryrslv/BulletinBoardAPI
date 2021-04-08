@@ -141,7 +141,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return BadRequest("Administrator has already been created");
         }
         [Authorize]
-        [HttpGet("all", Name = "GetAllUsers")]
+        [HttpGet("getall", Name = "GetAllUsers")]
         public async Task<IEnumerable<UserGetDto>> GetAllAsync()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -227,7 +227,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize]
-        [HttpDelete]
+        [HttpDelete("deletcurrenteuser")]
         public async Task<IActionResult> DeleteAsync()
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();

@@ -24,7 +24,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _mapper = mapper;
         }
         [Authorize]
-        [HttpGet("all", Name = "GetAllAds")]
+        [HttpGet("getall", Name = "GetAllAds")]
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
@@ -51,7 +51,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         [HttpGet("getbyadid/{id}", Name = "GetAd")]
         public async Task<IActionResult> GetAsync(Guid id)
         {
-            var ad = await _adService.GetAsync(id);
+            var ad = await _adService.GetByIdAsync(id);
             if (ad == null)
             {
                 return NotFound();
@@ -59,7 +59,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(ad);
         }
         [Authorize]
-        [HttpPost("new")]
+        [HttpPost("postnew")]
         public async Task<IActionResult> CreateAsync([FromBody] AdDto adDto)
         {
             if (adDto == null)
@@ -78,14 +78,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return CreatedAtRoute("GetAd", new { id = ad.Id}, ad);
         }
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut("updatebyid/{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto)
         {
             if (updatedAdDto == null)
             {
                 return NotFound("Ad for update not found");
             }
-            var ad = await _adService.GetAsync(id);
+            var ad = await _adService.GetByIdAsync(id);
             if (ad == null || ad.Id != id)
             {
                 return BadRequest();
@@ -101,10 +101,10 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
         }
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("deletebyid/{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var adForDelete = await _adService.GetAsync(id);
+            var adForDelete = await _adService.GetByIdAsync(id);
             if (adForDelete == null)
             {
                 return NotFound("Ad for delete not found");

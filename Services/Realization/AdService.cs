@@ -18,37 +18,38 @@ namespace BulletinBoardAPI.Services.Realization
         }
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
-            return await _context.AdItems.ToListAsync();
+            return await _context.Ads.ToListAsync();
         }
         public async Task<IEnumerable<Ad>> GetAllActualAsync()
         {
-            return await _context.AdItems.Where(i => i.ExpirationDite > DateTime.Now).ToListAsync();
+            return await _context.Ads.Where(i => i.ExpirationDite > DateTime.Now).ToListAsync();
+        }
+        public async Task<Ad> GetByIdAsync(Guid id)
+        {
+            return await _context.Ads.FindAsync(id);
         }
         public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
-            return await _context.AdItems.Where(i => i.UserName == name).ToListAsync();
+            return await _context.Ads.Where(i => i.UserName == name).ToListAsync();
         }
         public async Task<IEnumerable<Ad>> GetActualByNameAsync(string name)
         {
-            return await _context.AdItems.Where(i => i.UserName == name)
+            return await _context.Ads.Where(i => i.UserName == name)
                 .Where(i => i.ExpirationDite > DateTime.Now).ToListAsync();
         }
-        public async Task<Ad> GetAsync(Guid id)
-        {
-            return await _context.AdItems.FindAsync(id);
-        }
+        
         public async Task CreateAsync(Ad ad)
         {
             ad.CreateDate = DateTime.Now;
             ad.ExpirationDite = ad.CreateDate.AddMonths(1);
             ad.Rating = 0;
             ad.Number = await GetPostCount();
-            await _context.AdItems.AddAsync(ad);
+            await _context.Ads.AddAsync(ad);
             await _context.SaveChangesAsync();
         }
         public async Task UpdateAsync(Ad ad)
         {
-            _context.AdItems.Update(ad);
+            _context.Ads.Update(ad);
             await _context.SaveChangesAsync();
         }
 
@@ -57,7 +58,7 @@ namespace BulletinBoardAPI.Services.Realization
 
             if (ad != null)
             {
-                _context.AdItems.Remove(ad);
+                _context.Ads.Remove(ad);
                 await _context.SaveChangesAsync();
             }
 
@@ -65,7 +66,7 @@ namespace BulletinBoardAPI.Services.Realization
         }
         private async Task<int> GetPostCount()
         {
-            return await _context.AdItems.CountAsync();
+            return await _context.Ads.CountAsync();
         }
     }
 }

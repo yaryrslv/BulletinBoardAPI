@@ -6,10 +6,10 @@ namespace BulletinBoardAPI.EF
 {
     public class BulletinBoardContext : IdentityDbContext<User>
     {
-        public DbSet<Ad> AdItems { get; set; }
+        public DbSet<Ad> Ads { get; set; }
+        public DbSet<RatingAction> RatingActions { get; set; }
         public BulletinBoardContext(DbContextOptions<BulletinBoardContext> options) : base(options)
         {
-
         }
     }
 }

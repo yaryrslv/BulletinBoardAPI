@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Controllers.Implementations;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +21,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _adService = adService;
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpGet("all", Name = "ManagerGetAllAds")]
+        [HttpGet("getall", Name = "ManagerGetAllAds")]
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
+        }
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("getbyadid/{id}", Name = "ManagerGetAd")]
+        public async Task<IActionResult> GetByIdAsync(Guid id)
+        {
+            Ad ad = await _adService.GetByIdAsync(id);
+            if (ad == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(ad);
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getbyusername/{name}", Name = "ManagerGetAdByName")]
@@ -32,42 +44,15 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _adService.GetByNameAsync(name);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpGet("getbyadid/{id}", Name = "ManagerGetAd")]
-        public async Task<IActionResult> GetAsync(Guid id)
+        [HttpPut("updatebyid/{id}")]
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto)
         {
-            Ad ad = await _adService.GetAsync(id);
-            if (ad == null)
-            {
-                return NotFound();
-            }
-            return new ObjectResult(ad);
-        }
-        [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost("new")]
-        public async Task<IActionResult> CreateAsync([FromBody] Ad ad)
-        {
-            if (ad == null)
-            {
-                return BadRequest();
-            }
-
-            var userName = HttpContext.User.Identity?.Name;
-            if (userName == null)
-            {
-                return Unauthorized();
-            }
-            ad.UserName = userName;
-            await _adService.CreateAsync(ad);
-            return CreatedAtRoute("ManagerGetAd", new { id = ad.Id }, ad);
-        }
-        [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Ad updatedAd)
-        {
-            if (updatedAd == null)
+            if (updatedAdDto == null)
             {
                 return NotFound("Ad for update not found");
             }
+
+            var updatedAd = await _adService.GetByIdAsync(id);
             if (updatedAd == null || updatedAd.Id != id)
             {
                 return BadRequest();
@@ -76,10 +61,10 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return CreatedAtRoute("ManagerGetAd", new { id = updatedAd.Id }, updatedAd);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpDelete("{id}")]
+        [HttpDelete("deletebyid/{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var adForDelete = await _adService.GetAsync(id);
+            var adForDelete = await _adService.GetByIdAsync(id);
             if (adForDelete == null)
             {
                 return NotFound("Ad for delete not found");

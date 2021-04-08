@@ -50,7 +50,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(user);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost("new")]
+        [HttpPost("updaterolebyid")]
         public async Task<IActionResult> UpdateRoleAsync(string id, [FromBody] UserManagerUpdateRoleDto updated)
         {
             var user = await _userManager.FindByIdAsync(id);

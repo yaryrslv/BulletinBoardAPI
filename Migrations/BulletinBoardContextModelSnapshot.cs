@@ -48,7 +48,26 @@ namespace BulletinBoardAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdItems");
+                    b.ToTable("Ads");
+                });
+
+            modelBuilder.Entity("BulletinBoardAPI.Models.Realizations.RatingAction", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AdId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Time")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RatingActions");
                 });
 
             modelBuilder.Entity("BulletinBoardAPI.Models.Realizations.User", b =>
