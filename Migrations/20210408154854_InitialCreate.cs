@@ -68,9 +68,9 @@ namespace BulletinBoardAPI.Migrations
                 name: "RatingActions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Time = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AdId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AdId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

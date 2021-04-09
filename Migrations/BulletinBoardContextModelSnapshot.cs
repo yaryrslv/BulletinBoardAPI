@@ -53,14 +53,15 @@ namespace BulletinBoardAPI.Migrations
 
             modelBuilder.Entity("BulletinBoardAPI.Models.Realizations.RatingAction", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AdId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AdId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Time")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");

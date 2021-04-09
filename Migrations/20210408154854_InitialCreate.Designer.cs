@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BulletinBoardAPI.Migrations
 {
     [DbContext(typeof(BulletinBoardContext))]
-    [Migration("20210408143823_InitialCreate")]
+    [Migration("20210408154854_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,14 +55,15 @@ namespace BulletinBoardAPI.Migrations
 
             modelBuilder.Entity("BulletinBoardAPI.Models.Realizations.RatingAction", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AdId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AdId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Time")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");

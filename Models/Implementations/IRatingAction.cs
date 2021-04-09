@@ -1,10 +1,12 @@
-﻿namespace BulletinBoardAPI.Models.Realizations
+﻿using System;
+
+namespace BulletinBoardAPI.Models.Realizations
 {
     public interface IRatingAction
     {
-        string Id { get; set; }
-        string Time { get; set; }
-        string AdId { get; set; }
+        Guid Id { get; set; }
+        DateTime Time { get; set; }
+        Guid AdId { get; set; }
         string UserName { get; set; }
     }
 }

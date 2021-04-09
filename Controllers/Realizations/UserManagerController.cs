@@ -67,7 +67,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut]
+        [HttpPut("updatebyid")]
         public async Task<IActionResult> UpdateEMailAsync(string id, [FromBody] User updatedUser)
         {
             var currentUser = await _userManager.FindByIdAsync(id);
@@ -79,7 +79,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpDelete]
+        [HttpDelete("deletebyid")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

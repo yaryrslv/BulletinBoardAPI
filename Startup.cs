@@ -89,6 +89,7 @@ namespace BulletinBoardAPI
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             });
             services.AddTransient<IAdService, AdService>();
+            services.AddTransient<IRatingActionService, RatingActionService>();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }

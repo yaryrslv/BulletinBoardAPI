@@ -52,7 +52,6 @@ namespace BulletinBoardAPI.Services.Realization
             _context.Ads.Update(ad);
             await _context.SaveChangesAsync();
         }
-
         public async Task<Ad> DeleteAsync(Ad ad)
         {
 

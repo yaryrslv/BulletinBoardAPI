@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace BulletinBoardAPI.Mapper
 {

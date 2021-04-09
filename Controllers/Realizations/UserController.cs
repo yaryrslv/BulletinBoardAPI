@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
-using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +23,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
     [ApiController]
     public class UserController : ControllerBase, IUserController
     {
-        private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
 
-        public UserController(IMapper mapper, IConfiguration configuration, 
+        public UserController(IMapper mapper, IConfiguration configuration,
             UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _mapper = mapper;
@@ -36,6 +36,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
@@ -45,36 +46,34 @@ namespace BulletinBoardAPI.Controllers.Realizations
             if (user != null && await _userManager.CheckPasswordAsync(user, userLoginDto.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
-
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
-
                 foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
-
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTToken:SecretKey"]));
-
+                var authSigningKey =
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTToken:SecretKey"]));
                 var token = new JwtSecurityToken(
-                    issuer: _configuration["JWTToken:Issuer"],
-                    audience: _configuration["JWTToken:Audience"],
+                    _configuration["JWTToken:Issuer"],
+                    _configuration["JWTToken:Audience"],
                     expires: DateTime.Now.AddHours(3),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
-
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo
                 });
             }
+
             return Unauthorized();
         }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
@@ -84,10 +83,15 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
                 if (userExists != null)
-                    return StatusCode(StatusCodes.Status500InternalServerError,
-                        new Response {Status = "Error", Message = "User already exists!"});
-
-                User user = new User()
+                {
+                    return Conflict("User already exists!");
+                }
+                var emailExists = await _userManager.FindByEmailAsync(userRegisterDto.Email);
+                if (emailExists != null)
+                {
+                    return Conflict("Email already exists!");
+                }
+                var user = new User
                 {
                     Email = userRegisterDto.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
@@ -95,16 +99,16 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 };
                 var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
                 if (!result.Succeeded)
-                    return StatusCode(StatusCodes.Status500InternalServerError,
-                        new Response {Status = "Error", Message = result.ToString()});
+                {
+                    return BadRequest(result.ToString());
+                }
                 user.EmailConfirmed = true;
                 return CreatedAtRoute("GetUser", new {id = user.Id}, user);
             }
-            else
-            {
-                return BadRequest("User registeradmin for create administrator account");
-            }
+
+            return BadRequest("User registeradmin for create administrator account");
         }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("registeradmin")]
@@ -114,9 +118,15 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username);
                 if (userExists != null)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-                User user = new User()
+                {
+                    return Conflict("User already exists!");
+                }
+                var emailExists = await _userManager.FindByEmailAsync(userRegisterDto.Email);
+                if (emailExists != null)
+                {
+                    return Conflict("Email already exists!");
+                }
+                var user = new User
                 {
                     Email = userRegisterDto.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
@@ -124,22 +134,31 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 };
                 var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
                 if (!result.Succeeded)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
+                {
+                    return BadRequest(result.ToString());
+                }
 
                 if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                {
                     await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                }
+
                 if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                {
                     await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                }
 
                 if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 {
                     await _userManager.AddToRoleAsync(user, UserRoles.Admin);
                 }
                 user.EmailConfirmed = true;
-                return CreatedAtRoute("GetUser", new { id = user.Id }, user);
+                return CreatedAtRoute("GetUser", new {id = user.Id}, user);
             }
+
             return BadRequest("Administrator has already been created");
         }
+
         [Authorize]
         [HttpGet("getall", Name = "GetAllUsers")]
         public async Task<IEnumerable<UserGetDto>> GetAllAsync()
@@ -147,38 +166,39 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var users = await _userManager.Users.ToListAsync();
             return _mapper.Map<IEnumerable<UserGetDto>>(users);
         }
+
         [Authorize]
         [HttpGet("getbyid/{id}", Name = "GetUser")]
         public async Task<IActionResult> GetAsync(string id)
         {
-            User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound("User not found");
 
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
+
         [Authorize]
-        [HttpGet("getbyusername/{username}", Name = "GetUserByName")]
-        public async Task<IActionResult> GetByNameAsync(string userName)
+        [HttpGet("getbyusername/{userName}", Name = "GetUserByName")]
+        public async Task<IActionResult> GetByUserNameAsync(string userName)
         {
-            User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
+            var user = await _userManager.FindByNameAsync(userName.ToLower());
+            if (user == null) return NotFound("User not found");
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
+
         [Authorize]
         [HttpPut("updateemail")]
         public async Task<IActionResult> UpdateEmailAsync([FromBody] UserUpdateEmailDto userUpdateEMailDto)
         {
+            var emailExists = await _userManager.FindByEmailAsync(userUpdateEMailDto.Email);
+            if (emailExists != null)
+            {
+                return Conflict("Email already exists!");
+            }
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
-            if (userToken == String.Empty)
+            if (userToken == string.Empty)
             {
                 return NotFound("Token not found");
             }
@@ -187,7 +207,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("Current user not found");
             }
-            User user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
                 return BadRequest("User is null");
@@ -198,40 +218,15 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
-            //var response = await _userManager.SetEmailAsync(user, userUpdateEMailDto.Email);
-            return new ObjectResult(response);
-            
-        }
-        [Authorize]
-        [HttpPut("updatepassword")]
-        public async Task<IActionResult> UpdatePasswordAsync([FromBody] UserUpdatePasswordDto userUpdatePasswordDto)
-        {
-            var userToken = HttpContext.Request.Headers["Authorization"].ToString();
-            if (userToken == String.Empty)
-            {
-                return NotFound("Token not found");
-            }
-            var userName = HttpContext.User.Identity?.Name;
-            if (userName == null)
-            {
-                return NotFound("Current user not found");
-            }
-            User user = await _userManager.FindByNameAsync(userName);
-            if (user == null)
-            {
-                return BadRequest("User is null");
-            }
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var response = await _userManager.ResetPasswordAsync(user, 
-                token, userUpdatePasswordDto.NewPassword);
             return new ObjectResult(response);
         }
+
         [Authorize]
         [HttpDelete("deletcurrenteuser")]
         public async Task<IActionResult> DeleteAsync()
         {
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
-            if (userToken == String.Empty)
+            if (userToken == string.Empty)
             {
                 return NotFound("Token not found");
             }
@@ -240,19 +235,46 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("Current user not found");
             }
-            User user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
                 return NotFound("User not found");
             }
             var response = await _userManager.DeleteAsync(user);
+            await HttpContext.SignOutAsync();
             return new ObjectResult(response);
         }
+
+        [Authorize]
+        [HttpPut("updatepassword")]
+        public async Task<IActionResult> UpdatePasswordAsync([FromBody] UserUpdatePasswordDto userUpdatePasswordDto)
+        {
+            var userToken = HttpContext.Request.Headers["Authorization"].ToString();
+            if (userToken == string.Empty)
+            {
+                return NotFound("Token not found");
+            }
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName == null)
+            {
+                return NotFound("Current user not found");
+            }
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return BadRequest("User is null");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var response = await _userManager.ResetPasswordAsync(user,
+                token, userUpdatePasswordDto.NewPassword);
+            return new ObjectResult(response);
+        }
+
         private bool IsValidEmail(string email)
         {
             try
             {
-                var addr = new System.Net.Mail.MailAddress(email);
+                var addr = new MailAddress(email);
                 return addr.Address == email;
             }
             catch
