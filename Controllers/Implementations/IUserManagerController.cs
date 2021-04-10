@@ -12,7 +12,7 @@ namespace BulletinBoardAPI.Controllers.Implementations
         Task<IEnumerable<User>> GetAllAsync();
         Task<IActionResult> GetFullAsync(string id);
         Task<IActionResult> UpdateRoleAsync(string id, [FromBody] UserManagerUpdateRoleDto updated);
-        Task<IActionResult> UpdateEMailAsync(string id, [FromBody] User updatedUser);
+        Task<IActionResult> UpdateEmailAsync(string id, [FromBody] UserUpdateEmailDto userUpdateEMailDto);
         Task<IActionResult> DeleteAsync(string id);
     }
 }

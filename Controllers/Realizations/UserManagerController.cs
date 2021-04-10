@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Controllers.Implementations;
-using BulletinBoardAPI.DTO;
 using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(user);
         }
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getbyusername/{username}", Name = "ManagerGetUserByName")]
         public async Task<IActionResult> GetByNameAsync(string userName)
         {
@@ -50,7 +51,35 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(user);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost("updaterolebyid")]
+        [HttpPut("updateemail")]
+        public async Task<IActionResult> UpdateEmailAsync(string id, [FromBody] UserUpdateEmailDto userUpdateEMailDto)
+        {
+            var emailExists = await _userManager.FindByEmailAsync(userUpdateEMailDto.Email);
+            if (emailExists != null)
+            {
+                return Conflict("Email already exists!");
+            }
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName == null)
+            {
+                return NotFound("Current user not found");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return BadRequest("User is null");
+            }
+            if (!IsValidEmail(userUpdateEMailDto.Email))
+            {
+                return NotFound("Invalid Email");
+            }
+            var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
+            var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
+            return new ObjectResult(response);
+        }
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPut("updaterolebyid")]
         public async Task<IActionResult> UpdateRoleAsync(string id, [FromBody] UserManagerUpdateRoleDto updated)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -67,18 +96,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut("updatebyid")]
-        public async Task<IActionResult> UpdateEMailAsync(string id, [FromBody] User updatedUser)
-        {
-            var currentUser = await _userManager.FindByIdAsync(id);
-            if (currentUser == null)
-            {
-                return NotFound("Current user not found");
-            }
-            var response = await _userManager.UpdateAsync(currentUser);
-            return new ObjectResult(response);
-        }
-        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("deletebyid")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
@@ -87,8 +104,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return NotFound("User not found");
             }
-            var response = _userManager.DeleteAsync(user);
+            var response = await _userManager.DeleteAsync(user);
+            await HttpContext.SignOutAsync();
             return new ObjectResult(response);
+        }
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
