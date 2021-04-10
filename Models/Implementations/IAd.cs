@@ -1,5 +1,4 @@
 ﻿using System;
-using BulletinBoardAPI.Models.Realizations;
 
 namespace BulletinBoardAPI.Models.Implementations
 {
@@ -7,7 +6,8 @@ namespace BulletinBoardAPI.Models.Implementations
     {
         Guid Id { get; set; }
         int Number { get; set; }
-        User User { get; set; }
+        public string UserName { get; set; }
+        string City { get; set; }
         string Text { get; set; }
         string ImageUrl { get; set; }
         int Rating { get; set; }

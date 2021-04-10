@@ -1,12 +1,14 @@
 ﻿using System;
+using BulletinBoardAPI.Models.Implementations;
 
 namespace BulletinBoardAPI.Models.Realizations
 {
-    public class Ad 
+    public class Ad : IAd
     {
         public Guid Id { get; set; }
         public int Number { get; set; }
         public string UserName { get; set; }
+        public string City { get; set; }
         public string Text { get; set; }
         public string ImageUrl { get; set; }
         public int Rating { get; set; }
