@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Controllers.Implementations;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authentication;
@@ -51,7 +52,20 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(user);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut("updateemail")]
+        [HttpGet("getuserrolesbyid/{id}", Name = "ManagerGetUserRolesById")]
+        public async Task<IActionResult> GetRolesAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return new ObjectResult(roles);
+        }
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPut("updateemailbyid/{id}")]
         public async Task<IActionResult> UpdateEmailAsync(string id, [FromBody] UserUpdateEmailDto userUpdateEMailDto)
         {
             var emailExists = await _userManager.FindByEmailAsync(userUpdateEMailDto.Email);
@@ -78,8 +92,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
             return new ObjectResult(response);
         }
+        [Authorize]
+        [HttpPut("updatphonenumberbyid/{id}")]
+        public async Task<IActionResult> UpdatePhoneNumberAsync(string id, [FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Current user not found");
+            }
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, updatePhoneNumberDto.PhoneNumber);
+            var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
+            return new ObjectResult(response);
+        }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut("updaterolebyid")]
+        [HttpPut("updaterolebyid/{id}")]
         public async Task<IActionResult> UpdateRoleAsync(string id, [FromBody] UserManagerUpdateRoleDto updated)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -96,7 +123,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return new ObjectResult(response);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpDelete("deletebyid")]
+        [HttpDelete("deletebyid/{id}")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

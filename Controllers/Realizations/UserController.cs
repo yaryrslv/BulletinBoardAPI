@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authentication;
@@ -71,7 +71,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
                     expiration = token.ValidTo
                 });
             }
-
             return Unauthorized();
         }
 
@@ -189,11 +188,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return Conflict("Email already exists!");
             }
-            var userToken = HttpContext.Request.Headers["Authorization"].ToString();
-            if (userToken == string.Empty)
-            {
-                return NotFound("Token not found");
-            }
             var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
@@ -204,15 +198,28 @@ namespace BulletinBoardAPI.Controllers.Realizations
             {
                 return BadRequest("User is null");
             }
-            if (!IsValidEmail(userUpdateEMailDto.Email))
-            {
-                return NotFound("Invalid Email");
-            }
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
             return new ObjectResult(response);
         }
-
+        [Authorize]
+        [HttpPut("updatphonenumber")]
+        public async Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto)
+        {
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName == null)
+            {
+                return NotFound("Current user not found");
+            }
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return BadRequest("Current user not found");
+            }
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, updatePhoneNumberDto.PhoneNumber);
+            var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
+            return new ObjectResult(response);
+        }
         [Authorize]
         [HttpPut("updatepassword")]
         public async Task<IActionResult> UpdatePasswordAsync([FromBody] UserUpdatePasswordDto userUpdatePasswordDto)
@@ -260,18 +267,6 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.DeleteAsync(user);
             await HttpContext.SignOutAsync();
             return new ObjectResult(response);
-        }
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }

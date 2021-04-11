@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.DTO.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace BulletinBoardAPI.Controllers.Implementations
         Task<IActionResult> GetAsync(string id);
         Task<IActionResult> GetByUserNameAsync(string userName);
         Task<IActionResult> UpdateEmailAsync([FromBody] UserUpdateEmailDto userPutDto);
+        Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto);
         Task<IActionResult> DeleteAsync();
     }
 }
