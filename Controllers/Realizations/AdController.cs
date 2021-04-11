@@ -5,7 +5,7 @@ using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Implementation;
+using BulletinBoardAPI.Services.Realization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
@@ -30,10 +30,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _adService.GetAllAsync();
         }
         [Authorize]
-        [HttpGet("allactual", Name = "GetAllActualAds")]
+        [HttpGet("getallactual", Name = "GetAllActualAds")]
         public async Task<IEnumerable<Ad>> GetAllActualAsync()
         {
             return await _adService.GetAllActualAsync();
+        }
+        [Authorize]
+        [HttpGet("getbyadid/{id}", Name = "GetAdById")]
+        public async Task<IActionResult> GetByIdAsync(Guid id)
+        {
+            var ad = await _adService.GetByIdAsync(id);
+            if (ad == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(ad);
         }
         [Authorize]
         [HttpGet("getbyusername/{name}", Name = "GetAdsByName")]
@@ -42,16 +53,10 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _adService.GetByNameAsync(name);
         }
         [Authorize]
-        [HttpGet("getactualbyusername/{name}", Name = "GetActualAdsByName")]
-        public async Task<IEnumerable<Ad>> GetActualByNameAsync(string name)
+        [HttpGet("getbycity/{city}", Name = "GetAdByCity")]
+        public async Task<IActionResult> GetByCityAsync(string city)
         {
-            return await _adService.GetActualByNameAsync(name);
-        }
-        [Authorize]
-        [HttpGet("getbyadid/{id}", Name = "GetAd")]
-        public async Task<IActionResult> GetAsync(Guid id)
-        {
-            var ad = await _adService.GetByIdAsync(id);
+            var ad = await _adService.GetByCityAsync(city);
             if (ad == null)
             {
                 return NotFound();
@@ -75,7 +80,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var ad = _mapper.Map<Ad>(adDto);
             ad.UserName = userName;
             await _adService.CreateAsync(ad);
-            return CreatedAtRoute("GetAd", new { id = ad.Id}, ad);
+            return CreatedAtRoute("GetAdById", new { id = ad.Id}, ad);
         }
         [Authorize]
         [HttpPut("updatebyid/{id}")]
@@ -98,7 +103,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
 
             ad = _mapper.Map(updatedAdDto, ad);
             await _adService.UpdateAsync(ad);
-            return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
+            return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
         }
         [Authorize]
         [HttpDelete("deletebyid/{id}")]

@@ -10,8 +10,10 @@ namespace BulletinBoardAPI.Controllers.Implementations
     public interface IAdController
     {
         Task<IEnumerable<Ad>> GetAllAsync();
+        Task<IEnumerable<Ad>> GetAllActualAsync();
+        Task<IActionResult> GetByIdAsync(Guid id);
         Task<IEnumerable<Ad>> GetByNameAsync(string name);
-        Task<IActionResult> GetAsync(Guid id);
+        Task<IActionResult> GetByCityAsync(string city);
         Task<IActionResult> CreateAsync([FromBody] AdDto adDto);
         Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto);
         Task<IActionResult> DeleteAsync(Guid id);

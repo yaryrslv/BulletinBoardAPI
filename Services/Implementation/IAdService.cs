@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Models.Realizations;
 
-namespace BulletinBoardAPI.Services.Implementation
+namespace BulletinBoardAPI.Services.Realization
 {
     public interface IAdService
     {
@@ -11,7 +11,7 @@ namespace BulletinBoardAPI.Services.Implementation
         Task<IEnumerable<Ad>> GetAllActualAsync();
         Task<Ad> GetByIdAsync(Guid id);
         Task<IEnumerable<Ad>> GetByNameAsync(string name);
-        Task<IEnumerable<Ad>> GetActualByNameAsync(string name);
+        Task<IEnumerable<Ad>> GetByCityAsync(string city);
         Task CreateAsync(Ad ad);
         Task UpdateAsync(Ad ad);
         Task<Ad> DeleteAsync(Ad ad);

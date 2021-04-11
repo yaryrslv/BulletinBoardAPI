@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoardAPI.Services.Realization
@@ -32,12 +31,10 @@ namespace BulletinBoardAPI.Services.Realization
         {
             return await _context.Ads.Where(i => i.UserName == name).ToListAsync();
         }
-        public async Task<IEnumerable<Ad>> GetActualByNameAsync(string name)
+        public async Task<IEnumerable<Ad>> GetByCityAsync(string city)
         {
-            return await _context.Ads.Where(i => i.UserName == name)
-                .Where(i => i.ExpirationDite > DateTime.Now).ToListAsync();
+            return await _context.Ads.Where(i => i.City == city).ToListAsync();
         }
-        
         public async Task CreateAsync(Ad ad)
         {
             ad.CreateDate = DateTime.Now;

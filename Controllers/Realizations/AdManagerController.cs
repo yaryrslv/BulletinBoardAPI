@@ -5,6 +5,7 @@ using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Implementation;
+using BulletinBoardAPI.Services.Realization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
