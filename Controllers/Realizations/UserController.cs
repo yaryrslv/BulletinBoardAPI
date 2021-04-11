@@ -99,8 +99,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             if (!result.Succeeded) 
             { 
                 return BadRequest(result.ToString());
-            } 
-            user.EmailConfirmed = true; 
+            }
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
 
@@ -148,8 +147,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             if (await _roleManager.RoleExistsAsync(UserRoles.Admin)) 
             { 
                 await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            } 
-            user.EmailConfirmed = true; 
+            }
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
 
