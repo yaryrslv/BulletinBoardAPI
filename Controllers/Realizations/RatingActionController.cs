@@ -37,7 +37,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             if (await _adService.GetByIdAsync(adId) == null)
             {
-                return NotFound("Ad not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             var response = await _ratingActionService.GetAllByAdIdAsync(adId);
             return new JsonResult(response);
@@ -48,17 +52,29 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             if (ratingActionDto == null)
             {
-                return BadRequest("Wrong input data");
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "Wrong input data"
+                });
             }
             var ad = await _adService.GetByIdAsync(ratingActionDto.AdId);
             if (ad == null)
             {
-                return NotFound("Ad not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             var currentUserName = HttpContext.User.Identity?.Name;
             if (await _ratingActionService.IsRated(ad.Id, currentUserName))
             {
-                return Conflict("The ad has already been rated");
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "The ad has already been rated"
+                });
             } 
             var ratingAction = new RatingAction();
             ratingAction = _mapper.Map(ratingActionDto, ratingAction);
@@ -73,14 +89,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var ad = await _adService.GetByIdAsync(adId);
             if (ad == null)
             {
-                return NotFound("Ad not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             var currentUserName = HttpContext.User.Identity?.Name;
             if (await _ratingActionService.IsRated(ad.Id, currentUserName) == false)
             {
-                return Conflict("This ad has not been rated");
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "The ad has already been rated"
+                });
             }
-
             var ratingAction = await _ratingActionService.GetByAdIdAndUserNameAsync(adId, currentUserName);
             await _ratingActionService.RemoveAsync(ratingAction);
             return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);

@@ -71,7 +71,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
                     expiration = token.ValidTo
                 });
             }
-            return Unauthorized();
+            return Unauthorized(new Response()
+            {
+                Status = "Unauthorized",
+                Message = "Login, or password, is incorrect, the user is not authorized"
+            });
         }
 
         [HttpPost]
@@ -81,13 +85,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username); 
             if (userExists != null) 
-            { 
-                return Conflict("User already exists!");
+            {
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "User already exists"
+                });
             } 
             var emailExists = await _userManager.FindByEmailAsync(userRegisterDto.Email); 
             if (emailExists != null) 
-            { 
-                return Conflict("Email already exists!");
+            {
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "Email already exists"
+                });
             } 
             User user = new User 
             {
@@ -96,8 +108,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
             user = _mapper.Map(userRegisterDto, user); 
             var result = await _userManager.CreateAsync(user, userRegisterDto.Password); 
             if (!result.Succeeded) 
-            { 
-                return BadRequest(result.ToString());
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = result.ToString()
+                });
             }
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
@@ -112,17 +128,29 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var hashString = BitConverter.ToString(hash).Replace("-", "");
             if (_configuration["AdminRegistrationKeyMD5Hash"].ToLower() != hashString.ToLower())
             {
-                return BadRequest("Wrong admin registration key");
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "Wrong admin registration key"
+                });
             }
             var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username); 
             if (userExists != null) 
-            { 
-                return Conflict("User already exists!");
+            {
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "User already exists"
+                });
             } 
             var emailExists = await _userManager.FindByEmailAsync(userRegisterDto.Email); 
             if (emailExists != null) 
-            { 
-                return Conflict("Email already exists!");
+            {
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "Email already exists"
+                });
             } 
             User user = new User 
             {
@@ -131,8 +159,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
             user = _mapper.Map(userRegisterDto, user); 
             var result = await _userManager.CreateAsync(user, userRegisterDto.Password); 
             if (!result.Succeeded) 
-            { 
-                return BadRequest(result.ToString());
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = result.ToString()
+                });
             } 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin)) 
             {
@@ -163,8 +195,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
         public async Task<IActionResult> GetAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return NotFound("User not found");
-
+            if (user == null)
+            {
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
+            }
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
@@ -174,7 +212,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         public async Task<IActionResult> GetByUserNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName.ToLower());
-            if (user == null) return NotFound("User not found");
+            if (user == null) {return NotFound("User not found");}
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
@@ -186,17 +224,29 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var emailExists = await _userManager.FindByEmailAsync(userUpdateEMailDto.Email);
             if (emailExists != null)
             {
-                return Conflict("Email already exists!");
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "Email already exists!"
+                });
             }
             var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
-                return NotFound("Current user not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Current user not found"
+                });
             }
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
-                return BadRequest("User is null");
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "User is null"
+                });
             }
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
@@ -207,14 +257,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
         public async Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto)
         {
             var userName = HttpContext.User.Identity?.Name;
-            if (userName == null)
-            {
-                return NotFound("Current user not found");
-            }
             var user = await _userManager.FindByNameAsync(userName);
-            if (user == null)
+            if (userName == null || user == null)
             {
-                return BadRequest("Current user not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Current user not found"
+                });
             }
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, updatePhoneNumberDto.PhoneNumber);
             var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
@@ -227,17 +277,29 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == string.Empty)
             {
-                return NotFound("Token not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Token not found"
+                });
             }
             var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
-                return NotFound("Current user not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Current user not found"
+                });
             }
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
-                return BadRequest("User is null");
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "User is null"
+                });
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var response = await _userManager.ResetPasswordAsync(user,
@@ -252,17 +314,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == string.Empty)
             {
-                return NotFound("Token not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Token not found"
+                });
             }
             var userName = HttpContext.User.Identity?.Name;
-            if (userName == null)
-            {
-                return NotFound("Current user not found");
-            }
             var user = await _userManager.FindByNameAsync(userName);
-            if (user == null)
+            if (userName == null || user == null)
             {
-                return NotFound("User not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Current user not found"
+                });
             }
             var response = await _userManager.DeleteAsync(user);
             await HttpContext.SignOutAsync();

@@ -34,7 +34,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             Ad ad = await _adService.GetByIdAsync(id);
             if (ad == null)
             {
-                return NotFound();
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             return new ObjectResult(ad);
         }
@@ -50,13 +54,20 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             if (updatedAdDto == null)
             {
-                return NotFound("Ad for update not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
-
             var updatedAd = await _adService.GetByIdAsync(id);
             if (updatedAd == null || updatedAd.Id != id)
             {
-                return BadRequest();
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "Wrong input data"
+                });
             }
             await _adService.UpdateAsync(updatedAd);
             return CreatedAtRoute("ManagerGetAd", new { id = updatedAd.Id }, updatedAd);
@@ -68,7 +79,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var adForDelete = await _adService.GetByIdAsync(id);
             if (adForDelete == null)
             {
-                return NotFound("Ad for delete not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             var deletedAd = await _adService.DeleteAsync(adForDelete);
 

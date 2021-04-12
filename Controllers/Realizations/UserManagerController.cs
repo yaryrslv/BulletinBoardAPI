@@ -36,7 +36,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.Id == id);
             if (user == null)
             {
-                return NotFound("User not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
             }
             return new ObjectResult(user);
         }
@@ -47,7 +51,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             User user = await _userManager.Users.FirstOrDefaultAsync(i => i.UserName == userName);
             if (user == null)
             {
-                return NotFound("User not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
             }
             return new ObjectResult(user);
         }
@@ -58,7 +66,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound("User not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -71,22 +83,30 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var emailExists = await _userManager.FindByEmailAsync(userUpdateEMailDto.Email);
             if (emailExists != null)
             {
-                return Conflict("Email already exists!");
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "Email already exists"
+                });
             }
             var userName = HttpContext.User.Identity?.Name;
             if (userName == null)
             {
-                return NotFound("Current user not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Current user not found"
+                });
             }
 
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return BadRequest("User is null");
-            }
-            if (!IsValidEmail(userUpdateEMailDto.Email))
-            {
-                return NotFound("Invalid Email");
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "User is null"
+                });
             }
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
@@ -99,7 +119,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound("Current user not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Current user not found"
+                });
             }
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, updatePhoneNumberDto.PhoneNumber);
             var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
@@ -112,12 +136,20 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound("User not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
             }
 
             if (updated.Role != UserRoles.User || updated.Role != UserRoles.Admin)
             {
-                return NotFound("Role not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Role not found"
+                });
             }
             var response = await _userManager.AddToRoleAsync(user, updated.Role);
             return new ObjectResult(response);
@@ -129,23 +161,15 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound("User not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
             }
             var response = await _userManager.DeleteAsync(user);
             await HttpContext.SignOutAsync();
             return new ObjectResult(response);
-        }
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }

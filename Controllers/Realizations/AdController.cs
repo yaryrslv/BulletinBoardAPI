@@ -42,7 +42,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var ad = await _adService.GetByIdAsync(id);
             if (ad == null)
             {
-                return NotFound();
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             return new ObjectResult(ad);
         }
@@ -59,7 +63,11 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var ad = await _adService.GetByCityAsync(city);
             if (ad == null)
             {
-                return NotFound();
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             return new ObjectResult(ad);
         }
@@ -69,14 +77,13 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             if (adDto == null)
             {
-                return BadRequest();
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "Wrong input data"
+                });
             }
-
             var userName = HttpContext.User.Identity?.Name;
-            if (userName == null)
-            {
-                return Unauthorized();
-            }
             var ad = _mapper.Map<Ad>(adDto);
             ad.UserName = userName;
             await _adService.CreateAsync(ad);
@@ -88,19 +95,29 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             if (updatedAdDto == null)
             {
-                return NotFound("Ad for update not found");
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "Wrong input data"
+                });
             }
             var ad = await _adService.GetByIdAsync(id);
             if (ad == null || ad.Id != id)
             {
-                return BadRequest();
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
-
             if (HttpContext.User.Identity?.Name != ad.UserName)
             {
-                return BadRequest("Users don't match");
+                return Conflict(new Response()
+                {
+                    Status = "Conflict",
+                    Message = "Users don't match"
+                });
             }
-
             ad = _mapper.Map(updatedAdDto, ad);
             await _adService.UpdateAsync(ad);
             return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
@@ -112,14 +129,21 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var adForDelete = await _adService.GetByIdAsync(id);
             if (adForDelete == null)
             {
-                return NotFound("Ad for delete not found");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             if (HttpContext.User.Identity?.Name != adForDelete.UserName)
             {
-                return BadRequest("Users don't match");
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "Ad not found"
+                });
             }
             var deletedAd = await _adService.DeleteAsync(adForDelete);
-
             return new ObjectResult(deletedAd);
         }
     }
