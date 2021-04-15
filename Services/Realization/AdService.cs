@@ -27,7 +27,7 @@ namespace BulletinBoardAPI.Services.Realization
         {
             return await _context.Ads.FindAsync(id);
         }
-        public async Task<Ad> GetByNumber(int number)
+        public async Task<Ad> GetByNumberAsync(int number)
         {
             return await _context.Ads.FirstOrDefaultAsync(i => i.Number == number);
         }
@@ -45,6 +45,10 @@ namespace BulletinBoardAPI.Services.Realization
             ad.ExpirationDite = ad.CreateDate.AddMonths(1);
             ad.Rating = 0;
             ad.Number = await GetPostCount();
+            while (await GetByNumberAsync(ad.Number) != null)
+            {
+                ad.Number++;
+            }
             await _context.Ads.AddAsync(ad);
             await _context.SaveChangesAsync();
         }

@@ -38,7 +38,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _roleManager = roleManager;
         }
         /// <summary>
-        /// [AllowAnonymous] Creates new identity User authorization JWT token in Bearer format. by UserName and Password.
+        /// [AllowAnonymous] Creates new identity User authorization JWT token in Bearer format, by UserName and Password.
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
@@ -118,6 +118,18 @@ namespace BulletinBoardAPI.Controllers.Realizations
                     Status = "BadRequest",
                     Message = result.ToString()
                 });
+            }
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            }
+            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            }
+            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            {
+                await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
