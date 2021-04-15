@@ -13,4 +13,15 @@ https://localhost:44397/swagger/index.html
 4. Кликнуть Authorize.
 #### Получение всех пользователей:
 `curl -X GET "https://localhost:44397/api/UserManager/all" -H  "accept: text/plain" -H  "Authorization: Bearer {JWTToken}"`
-#### Получение всех пользователей:
+#### Получение пользователя по Id:
+`curl -X GET "https://localhost:44397/api/User/getbyid/{Id}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
+#### Получение пользователя по UserName:
+`curl -X GET "https://localhost:44397/api/User/getbyid/{UserName}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
+#### Обновление почты текущего пользователя:
+`curl -X PUT "https://localhost:44397/api/User/updateemail" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"email\":\"newadminusernewmail@example.com\"}"`
+#### Обновление телефона текущего пользователя:
+`curl -X PUT "https://localhost:44397/api/User/updatphonenumber" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"phoneNumber\":\"888888888888888888\"}"`
+#### Обновление пароля текущего пользователя:
+curl -X PUT "https://localhost:44397/api/User/updatepassword" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"newPassword\":\"NewPassword0!\"}"
+#### Удаление текущего пользователя:
+`curl -X DELETE "https://localhost:44397/api/User/deletcurrenteuser" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
