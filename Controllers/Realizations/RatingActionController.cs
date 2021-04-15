@@ -32,7 +32,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
             return await _ratingActionService.GetAllAsync();
         }
         [Authorize]
-        [HttpGet("getallbyadid", Name = "GetAllRatingActionsByAdId")]
+        [HttpGet("getallbyadid/{adId}", Name = "GetAllRatingActionsByAdId")]
         public async Task<IActionResult> GetAllByAdIdAsync(Guid adId)
         {
             if (await _adService.GetByIdAsync(adId) == null)
@@ -80,10 +80,10 @@ namespace BulletinBoardAPI.Controllers.Realizations
             ratingAction = _mapper.Map(ratingActionDto, ratingAction);
             ratingAction.UserName = currentUserName;
             await _ratingActionService.AddAsync(ratingAction);
-            return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
+            return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
         }
         [Authorize]
-        [HttpDelete("removebyid")]
+        [HttpDelete("removebyid/{adId}")]
         public async Task<IActionResult> RemoveByIdAsync(Guid adId)
         {
             var ad = await _adService.GetByIdAsync(adId);
@@ -101,12 +101,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 return Conflict(new Response()
                 {
                     Status = "Conflict",
-                    Message = "The ad has already been rated"
+                    Message = "This ad has not yet been rated"
                 });
             }
             var ratingAction = await _ratingActionService.GetByAdIdAndUserNameAsync(adId, currentUserName);
             await _ratingActionService.RemoveAsync(ratingAction);
-            return CreatedAtRoute("GetAd", new { id = ad.Id }, ad);
+            return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
@@ -16,10 +17,12 @@ namespace BulletinBoardAPI.Controllers.Realizations
     public class AdManagerController : ControllerBase, IAdManagerController
     {
         private readonly IAdService _adService;
+        private readonly IMapper _mapper;
 
-        public AdManagerController(IAdService adService)
+        public AdManagerController(IAdService adService, IMapper mapper)
         {
             _adService = adService;
+            _mapper = mapper;
         }
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getall", Name = "ManagerGetAllAds")]
@@ -69,6 +72,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
                     Message = "Wrong input data"
                 });
             }
+            updatedAd = _mapper.Map(updatedAdDto, updatedAd);
             await _adService.UpdateAsync(updatedAd);
             return CreatedAtRoute("ManagerGetAd", new { id = updatedAd.Id }, updatedAd);
         }

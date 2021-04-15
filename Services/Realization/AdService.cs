@@ -27,6 +27,10 @@ namespace BulletinBoardAPI.Services.Realization
         {
             return await _context.Ads.FindAsync(id);
         }
+        public async Task<Ad> GetByNumber(int number)
+        {
+            return await _context.Ads.FirstOrDefaultAsync(i => i.Number == number);
+        }
         public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
             return await _context.Ads.Where(i => i.UserName == name).ToListAsync();
