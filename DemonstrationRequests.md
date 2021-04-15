@@ -35,3 +35,5 @@ https://localhost:44397/swagger/index.html
 `curl -X GET "https://localhost:44397/api/UserManager/all" -H  "accept: text/plain" -H  "Authorization: Bearer {JWTToken}"`
 #### Получение полной информации о пользователе по Id:
 `curl -X GET "https://localhost:44397/api/UserManager/getbyid/{UserId}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
+#### Получение полной информации о пользователе по UserName:
+curl -X GET "https://localhost:44397/api/UserManager/getbyusername/{username}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"
