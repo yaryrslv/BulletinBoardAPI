@@ -12,6 +12,10 @@ https://localhost:44397/swagger/index.html
 2. Кликнуть Authorize.
 3. Ввести "Bearer {JWTToken}" в поле Value.
 4. Кликнуть Authorize.
+#### Отправка запроса с токеном напрямую:  
+Токен добавляется в заголовок, с ключом Authorization.  
+Пример:
+`"Authorization: Bearer {JWTToken}"`
 #### Получение всех пользователей:
 `curl -X GET "https://localhost:44397/api/UserManager/all" -H  "accept: text/plain" -H  "Authorization: Bearer {JWTToken}"`
 #### Получение пользователя по Id:
