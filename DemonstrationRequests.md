@@ -23,11 +23,11 @@ https://localhost:44397/swagger/index.html
 #### Обновление телефона текущего пользователя:
 `curl -X PUT "https://localhost:44397/api/User/updatphonenumber" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"phoneNumber\":\"888888888888888888\"}"`
 #### Обновление пароля текущего пользователя:
-curl -X PUT "https://localhost:44397/api/User/updatepassword" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"newPassword\":\"NewPassword0!\"}"
+`curl -X PUT "https://localhost:44397/api/User/updatepassword" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"newPassword\":\"NewPassword0!\"}"`
 #### Удаление текущего пользователя:
 `curl -X DELETE "https://localhost:44397/api/User/deletcurrenteuser" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
 ## Работа с пользователями как Администратор:
 #### Получение полной информации обо всех пользователях:
-curl -X GET "https://localhost:44397/api/UserManager/all" -H  "accept: text/plain" -H  "Authorization: Bearer {JWTToken}"
+`curl -X GET "https://localhost:44397/api/UserManager/all" -H  "accept: text/plain" -H  "Authorization: Bearer {JWTToken}"`
 #### Получение полной информации о пользователе по Id:
-curl -X GET "https://localhost:44397/api/UserManager/getbyid/eb3215c7-6413-4a66-a3cd-9285eea31628" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"
+`curl -X GET "https://localhost:44397/api/UserManager/getbyid/eb3215c7-6413-4a66-a3cd-9285eea31628" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
