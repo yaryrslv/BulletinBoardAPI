@@ -40,7 +40,7 @@ https://localhost:44397/swagger/index.html
 #### Получение списка ролей любого пользователя по Id:
 `curl -X GET "https://localhost:44397/api/UserManager/getuserrolesbyid/eb3215c7-6413-4a66-a3cd-9285eea31628" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
 #### Обновление почты любого пользователя по Id:
-curl -X PUT "https://localhost:44397/api/UserManager/updateemailbyid/{Id}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"email\":\"newusernewemail@example.com\"}"
+`curl -X PUT "https://localhost:44397/api/UserManager/updateemailbyid/{Id}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"email\":\"newusernewemail@example.com\"}"`
 #### Обновление телефона любого пользователя по Id:
-curl -X PUT "https://localhost:44397/api/UserManager/updateemailbyid/{Id}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"phoneNumber\":\"88888888\"}"
+`curl -X PUT "https://localhost:44397/api/UserManager/updateemailbyid/{Id}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}" -H  "Content-Type: application/json" -d "{\"phoneNumber\":\"88888888\"}"`
 
