@@ -33,9 +33,9 @@ https://localhost:44397/swagger/index.html
 ## Работа с пользователями как Администратор
 #### Получение полной информации обо всех пользователях:
 `curl -X GET "https://localhost:44397/api/UserManager/all" -H  "accept: text/plain" -H  "Authorization: Bearer {JWTToken}"`
-#### Получение полной информации о пользователе по Id:
+#### Получение полной информации о любом пользователе по Id:
 `curl -X GET "https://localhost:44397/api/UserManager/getbyid/{UserId}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
-#### Получение полной информации о пользователе по UserName:
+#### Получение полной информации о любом пользователе по UserName:
 `curl -X GET "https://localhost:44397/api/UserManager/getbyusername/{username}" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
-#### Получение списка ролей пользователя по Id:
+#### Получение списка ролей любого пользователя по Id:
 `curl -X GET "https://localhost:44397/api/UserManager/getuserrolesbyid/eb3215c7-6413-4a66-a3cd-9285eea31628" -H  "accept: */*" -H  "Authorization: Bearer {JWTToken}"`
