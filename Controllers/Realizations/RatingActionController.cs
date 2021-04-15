@@ -25,12 +25,18 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _adService = adService;
             _mapper = mapper;
         }
+        /// <summary>
+        /// [AuthorizeRequired] Receives all RatingActions for the entire time.
+        /// </summary>
         [Authorize]
         [HttpGet("getall", Name = "GetAllRatingActions")]
         public async Task<IEnumerable<RatingAction>> GetAllAsync()
         {
             return await _ratingActionService.GetAllAsync();
         }
+        /// <summary>
+        /// [AuthorizeRequired] Receives all Ad RatingActions by Ad Id.
+        /// </summary>
         [Authorize]
         [HttpGet("getallbyadid/{adId}", Name = "GetAllRatingActionsByAdId")]
         public async Task<IActionResult> GetAllByAdIdAsync(Guid adId)
@@ -46,6 +52,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _ratingActionService.GetAllByAdIdAsync(adId);
             return new JsonResult(response);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Creates new RatingAction.
+        /// </summary>
         [Authorize]
         [HttpPost("addbyid")]
         public async Task<IActionResult> AddByIdAsync([FromBody] RatingActionDto ratingActionDto)
@@ -82,6 +91,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             await _ratingActionService.AddAsync(ratingAction);
             return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Removes existing RatingAction.
+        /// </summary>
         [Authorize]
         [HttpDelete("removebyid/{adId}")]
         public async Task<IActionResult> RemoveByIdAsync(Guid adId)

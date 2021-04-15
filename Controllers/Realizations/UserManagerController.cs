@@ -23,12 +23,18 @@ namespace BulletinBoardAPI.Controllers.Realizations
         {
             _userManager = userManager;
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Get all identity Users in extended format.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("all", Name = "ManagerGetAll")]
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _userManager.Users.ToListAsync();
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Get identity User by Id in extended format.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getbyid/{id}", Name = "ManagerGetUser")]
         public async Task<IActionResult> GetFullAsync(string id)
@@ -44,6 +50,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(user);
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Get identity User by UserName in extended format.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getbyusername/{username}", Name = "ManagerGetUserByName")]
         public async Task<IActionResult> GetByNameAsync(string userName)
@@ -59,6 +68,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(user);
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Get role of any identity User by Id.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getuserrolesbyid/{id}", Name = "ManagerGetUserRolesById")]
         public async Task<IActionResult> GetRolesAsync(string id)
@@ -76,6 +88,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var roles = await _userManager.GetRolesAsync(user);
             return new ObjectResult(roles);
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Update Email of any identity User by Id.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("updateemailbyid/{id}")]
         public async Task<IActionResult> UpdateEmailAsync(string id, [FromBody] UserUpdateEmailDto userUpdateEMailDto)
@@ -112,6 +127,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
             return new ObjectResult(response);
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Update PhoneNumber of any identity User by Id.
+        /// </summary>
         [Authorize]
         [HttpPut("updatphonenumberbyid/{id}")]
         public async Task<IActionResult> UpdatePhoneNumberAsync(string id, [FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto)
@@ -129,6 +147,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
             return new ObjectResult(response);
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Update role of any identity User by Id.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("updaterolebyid/{id}")]
         public async Task<IActionResult> UpdateRoleAsync(string id, [FromBody] UserManagerUpdateRoleDto updated)
@@ -154,6 +175,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.AddToRoleAsync(user, updated.Role);
             return new ObjectResult(response);
         }
+        /// <summary>
+        /// [AdminRightsRequrered] Delete any identity User by Id.
+        /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("deletebyid/{id}")]
         public async Task<IActionResult> DeleteAsync(string id)

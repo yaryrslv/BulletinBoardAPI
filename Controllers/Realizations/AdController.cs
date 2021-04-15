@@ -23,18 +23,27 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _adService = adService;
             _mapper = mapper;
         }
+        /// <summary>
+        /// [AuthorizeRequired] Get all existing Ads.
+        /// </summary>
         [Authorize]
         [HttpGet("getall", Name = "GetAllAds")]
         public async Task<IEnumerable<Ad>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
         }
+        /// <summary>
+        /// [AuthorizeRequired] Show only Ads whose ExpirationDite has not yet arrived.
+        /// </summary>
         [Authorize]
         [HttpGet("getallactual", Name = "GetAllActualAds")]
         public async Task<IEnumerable<Ad>> GetAllActualAsync()
         {
             return await _adService.GetAllActualAsync();
         }
+        /// <summary>
+        /// [AuthorizeRequired] Finds an Ad by its Id.
+        /// </summary>
         [Authorize]
         [HttpGet("getbyadid/{id}", Name = "GetAdById")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
@@ -50,12 +59,18 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(ad);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Finds an Ad by its UserName.
+        /// </summary>
         [Authorize]
         [HttpGet("getbyusername/{name}", Name = "GetAdsByName")]
         public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Finds an Ad by its City.
+        /// </summary>
         [Authorize]
         [HttpGet("getbycity/{city}", Name = "GetAdByCity")]
         public async Task<IActionResult> GetByCityAsync(string city)
@@ -71,6 +86,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return new ObjectResult(ad);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Creates a new Ad.
+        /// </summary>
         [Authorize]
         [HttpPost("postnew")]
         public async Task<IActionResult> CreateAsync([FromBody] AdDto adDto)
@@ -89,6 +107,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             await _adService.CreateAsync(ad);
             return CreatedAtRoute("GetAdById", new { id = ad.Id}, ad);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Updates the Ad of the current current Authorized identity User by its Id.
+        /// </summary>
         [Authorize]
         [HttpPut("updatebyid/{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto)
@@ -122,6 +143,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             await _adService.UpdateAsync(ad);
             return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Deletes the Ad of the current Authorized identity User by its Id.
+        /// </summary>
         [Authorize]
         [HttpDelete("deletebyid/{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)

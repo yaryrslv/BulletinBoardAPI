@@ -37,7 +37,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
+        /// <summary>
+        /// [AllowAnonymous] Creates new identity User authorization JWT token in Bearer format. by UserName and Password.
+        /// </summary>
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
@@ -77,7 +79,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 Message = "Login, or password, is incorrect, the user is not authorized"
             });
         }
-
+        /// <summary>
+        /// [AllowAnonymous] Create new identity User with User role.
+        /// </summary>
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
@@ -117,7 +121,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
-
+        /// <summary>
+        /// [AllowAnonymous] Create new identity User with Admin role, AdminRegistrationKey required.
+        /// </summary>
         [HttpPost]
         [AllowAnonymous]
         [Route("registeradmin")]
@@ -181,7 +187,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
-
+        /// <summary>
+        /// [AuthorizeRequired] Get all Users.
+        /// </summary>
         [Authorize]
         [HttpGet("getall", Name = "GetAllUsers")]
         public async Task<IEnumerable<UserGetDto>> GetAllAsync()
@@ -189,7 +197,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var users = await _userManager.Users.ToListAsync();
             return _mapper.Map<IEnumerable<UserGetDto>>(users);
         }
-
+        /// <summary>
+        /// [AuthorizeRequired] Get all Users by Id.
+        /// </summary>
         [Authorize]
         [HttpGet("getbyid/{id}", Name = "GetUserById")]
         public async Task<IActionResult> GetAsync(string id)
@@ -206,7 +216,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
-
+        /// <summary>
+        /// [AuthorizeRequired] Get all Users by UserName.
+        /// </summary>
         [Authorize]
         [HttpGet("getbyusername/{userName}", Name = "GetUserByName")]
         public async Task<IActionResult> GetByUserNameAsync(string userName)
@@ -216,7 +228,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
-
+        /// <summary>
+        /// [AuthorizeRequired] Updates Email of current Authorized identity User.
+        /// </summary>
         [Authorize]
         [HttpPut("updateemail")]
         public async Task<IActionResult> UpdateEmailAsync([FromBody] UserUpdateEmailDto userUpdateEMailDto)
@@ -252,6 +266,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
             return new ObjectResult(response);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Updates PhoneNumber of current Authorized identity identity User.
+        /// </summary>
         [Authorize]
         [HttpPut("updatphonenumber")]
         public async Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto)
@@ -270,6 +287,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
             return new ObjectResult(response);
         }
+        /// <summary>
+        /// [AuthorizeRequired] Updates Password of current Authorized identity identity User.
+        /// </summary>
         [Authorize]
         [HttpPut("updatepassword")]
         public async Task<IActionResult> UpdatePasswordAsync([FromBody] UserUpdatePasswordDto userUpdatePasswordDto)
@@ -306,7 +326,9 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 token, userUpdatePasswordDto.NewPassword);
             return new ObjectResult(response);
         }
-
+        /// <summary>
+        /// [AuthorizeRequired] Deletes current Authorized identity identity User.
+        /// </summary>
         [Authorize]
         [HttpDelete("deletcurrenteuser")]
         public async Task<IActionResult> DeleteAsync()
