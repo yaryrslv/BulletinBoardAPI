@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.DTO.User
+﻿namespace BulletinBoardAPI.DTO.UserManager
 {
     public class UserManagerUpdateRoleDto
     {

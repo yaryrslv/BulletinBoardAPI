@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BulletinBoardAPI.Models.Realizations
+namespace BulletinBoardAPI.Models.Implementations
 {
     public interface IRatingAction
     {

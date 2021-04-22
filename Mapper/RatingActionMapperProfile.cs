@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.DTO.Rating;
 using BulletinBoardAPI.Models.Realizations;
 

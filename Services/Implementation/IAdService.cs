@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Models.Realizations;
 
-namespace BulletinBoardAPI.Services.Realization
+namespace BulletinBoardAPI.Services.Implementation
 {
     public interface IAdService
     {

@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Controllers.Implementations;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.DTO.User;
+using BulletinBoardAPI.DTO.UserManager;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BulletinBoardAPI.Controllers.Realizations
 {
@@ -27,7 +28,7 @@ namespace BulletinBoardAPI.Controllers.Realizations
         /// [AdminRightsRequrered] Get all identity Users in extended format.
         /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpGet("all", Name = "ManagerGetAll")]
+        [HttpGet("getall", Name = "ManagerGetAll")]
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _userManager.Users.ToListAsync();
@@ -125,6 +126,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             return new ObjectResult(response);
         }
         /// <summary>
@@ -173,6 +182,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 });
             }
             var response = await _userManager.AddToRoleAsync(user, updated.Role);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             return new ObjectResult(response);
         }
         /// <summary>
@@ -192,6 +209,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 });
             }
             var response = await _userManager.DeleteAsync(user);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             await HttpContext.SignOutAsync();
             return new ObjectResult(response);
         }

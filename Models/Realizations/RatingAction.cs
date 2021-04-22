@@ -1,4 +1,5 @@
 ﻿using System;
+using BulletinBoardAPI.Models.Implementations;
 
 namespace BulletinBoardAPI.Models.Realizations
 {

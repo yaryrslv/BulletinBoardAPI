@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.DTO
+﻿namespace BulletinBoardAPI.DTO.Ad
 {
     public class AdGetByNameDto
     {

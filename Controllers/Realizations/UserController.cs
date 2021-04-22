@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace BulletinBoardAPI.Controllers.Realizations
 {
@@ -236,7 +237,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
         public async Task<IActionResult> GetByUserNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName.ToLower());
-            if (user == null) {return NotFound("User not found");}
+            if (user == null)
+            {
+                return NotFound(new Response()
+                {
+                    Status = "NotFound",
+                    Message = "User not found"
+                });
+            }
             var response = _mapper.Map<UserGetDto>(user);
             return new ObjectResult(response);
         }
@@ -276,6 +284,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, userUpdateEMailDto.Email);
             var response = await _userManager.ChangeEmailAsync(user, userUpdateEMailDto.Email, token);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             return new ObjectResult(response);
         }
         /// <summary>
@@ -297,6 +313,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
             }
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, updatePhoneNumberDto.PhoneNumber);
             var response = await _userManager.ChangePhoneNumberAsync(user, updatePhoneNumberDto.PhoneNumber, token);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             return new ObjectResult(response);
         }
         /// <summary>
@@ -327,15 +351,23 @@ namespace BulletinBoardAPI.Controllers.Realizations
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
-                return BadRequest(new Response()
+                return NotFound(new Response()
                 {
-                    Status = "BadRequest",
-                    Message = "User is null"
+                    Status = "NotFound",
+                    Message = "User mot found"
                 });
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var response = await _userManager.ResetPasswordAsync(user,
                 token, userUpdatePasswordDto.NewPassword);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             return new ObjectResult(response);
         }
         /// <summary>
@@ -365,6 +397,14 @@ namespace BulletinBoardAPI.Controllers.Realizations
                 });
             }
             var response = await _userManager.DeleteAsync(user);
+            if (response.Succeeded == false)
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "Error",
+                    Message = JsonConvert.SerializeObject(response.Errors)
+                });
+            }
             await HttpContext.SignOutAsync();
             return new ObjectResult(response);
         }

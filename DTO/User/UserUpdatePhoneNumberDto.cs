@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BulletinBoardAPI.DTO.Ad
+namespace BulletinBoardAPI.DTO.User
 {
     public class UserUpdatePhoneNumberDto
     {
