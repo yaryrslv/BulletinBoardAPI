@@ -26,7 +26,8 @@
 4. Публикация:  
 https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli  
 ## Тестирование  
-1. Использование Swagger, по пути:    
+1. Использование Swagger:    
+Веб интерфейс доступен по пути:  
 `{https://servername:serverport}/swagger/index.html`  
 2. Использование PostMan:  
 Импортировать файл `BulletinBoardApi.postman_collection` как `RawText`
