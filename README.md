@@ -29,6 +29,8 @@ https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli
 1. Использование Swagger:    
 Веб интерфейс доступен по пути:  
 `{https://servername:serverport}/swagger/index.html`  
+Для авторизации необходимо получить токен приложения, затем авторизироваться, введя `Bearer {Token}`    
 2. Использование PostMan:  
-Импортировать файл `BulletinBoardApi.postman_collection.json` как `RawText`
+Импортировать файл `BulletinBoardApi.postman_collection.json` как `RawText`    
+Авторизация выполняется автоматически, с помощью JS скрипта.
 
