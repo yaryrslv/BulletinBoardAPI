@@ -30,5 +30,5 @@ https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli
 Веб интерфейс доступен по пути:  
 `{https://servername:serverport}/swagger/index.html`  
 2. Использование PostMan:  
-Импортировать файл `BulletinBoardApi.postman_collection` как `RawText`
+Импортировать файл `BulletinBoardApi.postman_collection.json` как `RawText`
 
