@@ -1,0 +1,1218 @@
+{
+	"info": {
+		"_postman_id": "4959eb76-d5fe-4a64-a4fb-7b9bb8c0b046",
+		"name": "BulletinBoardApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "AdminRegistration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.clearGlobalVariable(\"currentUserName\");\r",
+									"postman.setGlobalVariable(\"currentUserName\", data.userName);\r",
+									"postman.clearGlobalVariable(\"currentUserId\");\r",
+									"postman.setGlobalVariable(\"currentUserId\", data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"{{$randomUserName}}\",\"email\":\"{{$randomEmail}}\",\"phoneNumber\":\"{{$randomPhoneNumber}}\",\"password\":\"{{currentUserPassword}}\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/registeradmin?adminRegistrationKey={{adminRegistrationKey}}",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"registeradmin"
+							],
+							"query": [
+								{
+									"key": "adminRegistrationKey",
+									"value": "{{adminRegistrationKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AdminLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.clearGlobalVariable(\"currentToken\");\r",
+									"postman.setGlobalVariable(\"currentToken\", data.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"{{currentUserName}}\",\"password\":\"{{currentUserPassword}}\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/login",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserRegistration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.clearGlobalVariable(\"currentUserName\");\r",
+									"postman.setGlobalVariable(\"currentUserName\", data.userName);\r",
+									"postman.clearGlobalVariable(\"currentUserId\");\r",
+									"postman.setGlobalVariable(\"currentUserId\", data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"{{$randomUserName}}\",\"email\":\"{{$randomEmail}}\",\"phoneNumber\":\"{{$randomPhoneNumber}}\",\"password\":\"{{currentUserPassword}}\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/register",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.clearGlobalVariable(\"currentToken\");\r",
+									"postman.setGlobalVariable(\"currentToken\", data.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"{{currentUserName}}\",\"password\":\"{{currentUserPassword}}\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/login",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/getall",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"getall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/getbyid/{{currentUserId}}",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"getbyid",
+								"{{currentUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByUserName",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/getbyusername/{{currentUserName}}",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"getbyusername",
+								"{{currentUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateEmail",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"{{$randomEmail}}\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/updateemail",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"updateemail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePhoneNumber",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"phoneNumber\":\"{{$randomPhoneNumber}}\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/updatphonenumber",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"updatphonenumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePassword",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"newPassword\":\"NewPassword0!\"}"
+						},
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/updatepassword",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"updatepassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCurrentUser",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://{{apihost}}:{{apiport}}/api/User/deletcurrenteuser",
+							"protocol": "https",
+							"host": [
+								"{{apihost}}"
+							],
+							"port": "{{apiport}}",
+							"path": [
+								"api",
+								"User",
+								"deletcurrenteuser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserManager",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/getall",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"getall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/getbyid/{{currentUserId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"getbyid",
+								"{{currentUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByUserName",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/getbyusername/{{currentUserName}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"getbyusername",
+								"{{currentUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserRolesById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/getuserrolesbyid/{{currentUserId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"getuserrolesbyid",
+								"{{currentUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateEmaulById",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"{{$randomEmail}}\"}"
+						},
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/updateemailbyid/{{currentUserId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"updateemailbyid",
+								"{{currentUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePhoneNumberById",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"phoneNumber\":\"{{$randomPhoneNumber}}\"}"
+						},
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/updatphonenumberbyid/{{currentUserId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"updatphonenumberbyid",
+								"{{currentUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/UserManager/deletebyid/{{currentUserId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"UserManager",
+								"deletebyid",
+								"{{currentUserId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ad",
+			"item": [
+				{
+					"name": "PostNew",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.clearGlobalVariable(\"postId\");\r",
+									"postman.setGlobalVariable(\"postId\", data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"text\":\"NewPost\",\"imageUrl\":\"NewImageUrl\",\"city\":\"NewCity\"}"
+						},
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/postnew",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"postnew"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/getall",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"getall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActual",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/getallactual",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"getallactual"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/getbyadid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"getbyadid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByUserName",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/getbyusername/{{currentUserName}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"getbyusername",
+								"{{currentUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByCity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/getbycity/NewCity",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"getbycity",
+								"NewCity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateById",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"text\":\"updatedText\",\"imageUrl\":\"updatedUrl\",\"city\":\"updatedCity\"}"
+						},
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/updatebyid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"updatebyid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/Ad/deletebyid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"Ad",
+								"deletebyid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AdManager",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/AdManager/getall",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"AdManager",
+								"getall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/AdManager/getbyadid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"AdManager",
+								"getbyadid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByUserName",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/AdManager/getbyusername/{{currentUserName}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"AdManager",
+								"getbyusername",
+								"{{currentUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateById",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"text\":\"updatedString\",\"imageUrl\":\"updatedUrl\",\"city\":\"updatedCity\"}"
+						},
+						"url": {
+							"raw": "https://localhost:44397/api/AdManager/updatebyid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"AdManager",
+								"updatebyid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/AdManager/deletebyid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"AdManager",
+								"deletebyid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RatingAction",
+			"item": [
+				{
+					"name": "AddById",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"adId\":\"{{postId}}\"}"
+						},
+						"url": {
+							"raw": "https://localhost:44397/api/RatingAction/addbyid",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"RatingAction",
+								"addbyid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/RatingAction/getall",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"RatingAction",
+								"getall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllByAdId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/RatingAction/getallbyadid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"RatingAction",
+								"getallbyadid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:44397/api/RatingAction/removebyid/{{postId}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44397",
+							"path": [
+								"api",
+								"RatingAction",
+								"removebyid",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{currentToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "7310d73c-cd2f-4eeb-a0ea-5c91e786b8f8",
+			"key": "apihost",
+			"value": "localhost"
+		},
+		{
+			"id": "02fa5a47-b4bb-485d-84f8-067f41a58831",
+			"key": "apiport",
+			"value": "44397"
+		},
+		{
+			"id": "da1987b3-38f8-414a-af88-858bd28d93d8",
+			"key": "adminRegistrationKey",
+			"value": "BulletinBoardApi"
+		},
+		{
+			"id": "9fb246f8-b19c-4c8a-af43-11c3baa76b4c",
+			"key": "currentToken",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"id": "72b31e2b-07b4-470b-b83e-0cce5265ae3d",
+			"key": "currentUserName",
+			"value": null,
+			"disabled": true
+		},
+		{
+			"id": "476c2f2b-625f-484c-bf8b-ebc671b3c9da",
+			"key": "currentUserPassword",
+			"value": "Password0!"
+		},
+		{
+			"id": "92e634bd-c630-484a-9cf8-4803f80899ee",
+			"key": "currentUserId",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"id": "e8d82e2b-e005-419a-bb70-1832d2a6ab0d",
+			"key": "postId",
+			"value": "",
+			"disabled": true
+		}
+	]
+}
