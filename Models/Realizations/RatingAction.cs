@@ -1,5 +1,5 @@
 ﻿using System;
-using BulletinBoardAPI.Models.Implementations;
+using BulletinBoardAPI.Models.Abstractions;
 
 namespace BulletinBoardAPI.Models.Realizations
 {

@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Implementation;
+using BulletinBoardAPI.Services.Abstractions;
 using BulletinBoardAPI.Services.Realization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

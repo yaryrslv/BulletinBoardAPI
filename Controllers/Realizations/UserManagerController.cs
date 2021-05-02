@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.Controllers.Implementations;
-using BulletinBoardAPI.DTO.Ad;
+using BulletinBoardAPI.Controllers.Abstractions;
 using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.DTO.UserManager;
 using BulletinBoardAPI.Models.Realizations;

@@ -5,7 +5,7 @@ using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulletinBoardAPI.Controllers.Implementations
+namespace BulletinBoardAPI.Controllers.Abstractions
 {
     public interface IAdController
     {

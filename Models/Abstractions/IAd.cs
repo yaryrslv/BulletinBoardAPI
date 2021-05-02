@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BulletinBoardAPI.Models.Implementations
+namespace BulletinBoardAPI.Models.Abstractions
 {
     public interface IAd
     {

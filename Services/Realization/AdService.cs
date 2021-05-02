@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Implementation;
+using BulletinBoardAPI.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulletinBoardAPI.Services.Realization

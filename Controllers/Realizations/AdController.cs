@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Controllers.Implementations;
+using BulletinBoardAPI.Controllers.Abstractions;
 using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Implementation;
-using BulletinBoardAPI.Services.Realization;
+using BulletinBoardAPI.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
