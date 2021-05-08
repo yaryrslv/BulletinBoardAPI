@@ -83,7 +83,8 @@ namespace BulletinBoardAPI
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"],
+                x => x.MigrationsAssembly("Data")));
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<BulletinBoardContext>()
                 .AddDefaultTokenProviders();
