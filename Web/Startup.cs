@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using BulletinBoardAPI.EF;
 using BulletinBoardAPI.Models.Realizations;
 using BulletinBoardAPI.Services.Abstractions;
 using BulletinBoardAPI.Services.Realization;
+using Data.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-namespace BulletinBoardAPI
+namespace Web
 {
     public class Startup
     {
