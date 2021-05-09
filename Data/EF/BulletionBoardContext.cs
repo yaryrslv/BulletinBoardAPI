@@ -28,6 +28,11 @@ namespace Data.EF
                 b.Property(p => p.ImageUrl).HasMaxLength(1048);
                 b.ToTable("Ads");
             });
+            builder.HasSequence("DBSequence")
+                .StartsAt(0).IncrementsBy(1);
+            builder.Entity<Ad>()
+                .Property(p => p.Number)
+                .HasDefaultValueSql("NEXT VALUE FOR DBSequence");
             builder.Entity<RatingAction>(b =>
             {
                 b.HasIndex(p => p.Id).IsUnique();

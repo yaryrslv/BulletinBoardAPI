@@ -45,11 +45,6 @@ namespace Web.Services.Realization
             ad.CreateDate = DateTime.Now;
             ad.ExpirationDite = ad.CreateDate.AddMonths(1);
             ad.Rating = 0;
-            ad.Number = await GetPostCount();
-            while (await GetByNumberAsync(ad.Number) != null)
-            {
-                ad.Number++;
-            }
             await _context.Ads.AddAsync(ad);
             await _context.SaveChangesAsync();
         }
