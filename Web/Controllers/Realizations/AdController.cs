@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Controllers.Abstractions;
@@ -7,6 +8,7 @@ using BulletinBoardAPI.Models.Realizations;
 using Data.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
 using Web.Services.Abstractions;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
@@ -19,10 +21,12 @@ namespace Web.Controllers.Realizations
     {
         private readonly IAdService _adService;
         private readonly IMapper _mapper;
-        public AdController(IAdService adService, IMapper mapper)
+        public IConfiguration Configuration { get; }
+        public AdController(IAdService adService, IMapper mapper, IConfiguration configuration)
         {
             _adService = adService;
             _mapper = mapper;
+            Configuration = configuration;
         }
         /// <summary>
         /// [AuthorizeRequired] Get all existing Ads.
@@ -105,6 +109,16 @@ namespace Web.Controllers.Realizations
             var userName = HttpContext.User.Identity?.Name;
             var ad = _mapper.Map<Ad>(adDto);
             ad.UserName = userName;
+            var userAds = await _adService.GetByNameAsync(userName);
+            var userAdsCount = userAds.Count();
+            if (userAdsCount >= int.Parse(Configuration["MaxUserAds"]))
+            {
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = "User Ads count quota exceeded"
+                });
+            }
             await _adService.CreateAsync(ad);
             return CreatedAtRoute("GetAdById", new { id = ad.Id}, ad);
         }
