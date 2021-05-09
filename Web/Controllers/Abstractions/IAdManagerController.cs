@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.DTO.Ad;
-using BulletinBoardAPI.Models.Realizations;
+using Data.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
+using Web.DTO.Ad;
 
-namespace BulletinBoardAPI.Controllers.Abstractions
+namespace Web.Controllers.Abstractions
 {
     public interface IAdManagerController
     {

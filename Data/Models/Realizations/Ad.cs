@@ -1,7 +1,7 @@
 ﻿using System;
-using BulletinBoardAPI.Models.Abstractions;
+using Data.Models.Abstractions;
 
-namespace BulletinBoardAPI.Models.Realizations
+namespace Data.Models.Realizations
 {
     public class Ad : IAd
     {

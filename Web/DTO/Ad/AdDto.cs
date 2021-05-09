@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.DTO.Ad
+﻿namespace Web.DTO.Ad
 {
     public class AdDto
     {

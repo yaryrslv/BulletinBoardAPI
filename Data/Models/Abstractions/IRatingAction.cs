@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BulletinBoardAPI.Models.Abstractions
+namespace Data.Models.Abstractions
 {
     public interface IRatingAction
     {

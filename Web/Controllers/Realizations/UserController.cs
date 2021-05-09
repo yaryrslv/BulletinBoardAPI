@@ -6,8 +6,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Controllers.Abstractions;
-using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -17,8 +15,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Web.Controllers.Abstractions;
+using Web.DTO.User;
 
-namespace BulletinBoardAPI.Controllers.Realizations
+namespace Web.Controllers.Realizations
 {
     [Route("api/[controller]")]
     [ApiController]

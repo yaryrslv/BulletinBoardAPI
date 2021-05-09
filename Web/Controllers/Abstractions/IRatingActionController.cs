@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.DTO.Rating;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Mvc;
+using Web.DTO.Rating;
 
-namespace BulletinBoardAPI.Controllers.Abstractions
+namespace Web.Controllers.Abstractions
 {
     public interface IRatingActionController
     {

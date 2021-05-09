@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Controllers.Abstractions;
-using BulletinBoardAPI.DTO.Ad;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Abstractions;
+using Data.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.Controllers.Abstractions;
+using Web.DTO.Ad;
+using Web.Services.Abstractions;
 
-namespace BulletinBoardAPI.Controllers.Realizations
+namespace Web.Controllers.Realizations
 {
     [Route("api/[controller]")]
     [ApiController]

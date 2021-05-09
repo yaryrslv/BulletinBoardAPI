@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Web;
 
-namespace BulletinBoardAPI
+namespace Web
 {
     public class Program
     {

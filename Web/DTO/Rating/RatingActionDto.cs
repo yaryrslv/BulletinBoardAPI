@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BulletinBoardAPI.DTO.Rating
+namespace Web.DTO.Rating
 {
     public class RatingActionDto
     {

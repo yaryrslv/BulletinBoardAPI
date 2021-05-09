@@ -3,8 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Abstractions;
-using BulletinBoardAPI.Services.Realization;
 using Data.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Web.Services.Abstractions;
+using Web.Services.Realization;
 
 namespace Web
 {

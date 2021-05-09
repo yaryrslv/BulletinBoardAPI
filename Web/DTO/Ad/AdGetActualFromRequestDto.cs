@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace BulletinBoardAPI.DTO.Ad
+namespace Web.DTO.Ad
 {
     public class AdGetActualFromRequestDto
     {
-        public IEnumerable<Models.Realizations.Ad> RequestedAds { get; set; }
+        public IEnumerable<Data.Models.Realizations.Ad> RequestedAds { get; set; }
     }
 }

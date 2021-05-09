@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BulletinBoardAPI.DTO.User;
 using BulletinBoardAPI.Models.Realizations;
+using Web.DTO.User;
 
-namespace BulletinBoardAPI.Mapper
+namespace Web.Mapper
 {
     public class UserMapperProfile : Profile
     {

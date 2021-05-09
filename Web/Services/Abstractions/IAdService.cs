@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.Models.Realizations;
+using Data.Models.Realizations;
 
-namespace BulletinBoardAPI.Services.Abstractions
+namespace Web.Services.Abstractions
 {
     public interface IAdService
     {

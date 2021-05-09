@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Abstractions;
 using Data.EF;
+using Data.Models.Realizations;
 using Microsoft.EntityFrameworkCore;
+using Web.Services.Abstractions;
 
-namespace BulletinBoardAPI.Services.Realization
+namespace Web.Services.Realization
 {
     public class AdService : IAdService
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Models.Realizations;
 
-namespace BulletinBoardAPI.Services.Abstractions
+namespace Web.Services.Abstractions
 {
     public interface IRatingActionService
     {

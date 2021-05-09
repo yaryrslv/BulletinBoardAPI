@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BulletinBoardAPI.DTO.Ad;
-using BulletinBoardAPI.Models.Realizations;
+using Data.Models.Realizations;
+using Web.DTO.Ad;
 
-namespace BulletinBoardAPI.Mapper
+namespace Web.Mapper
 {
     public class AdMapperProfile : Profile
     {

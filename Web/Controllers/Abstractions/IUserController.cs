@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.DTO.User;
 using Microsoft.AspNetCore.Mvc;
+using Web.DTO.User;
 
-namespace BulletinBoardAPI.Controllers.Abstractions
+namespace Web.Controllers.Abstractions
 {
     public interface IUserController
     {

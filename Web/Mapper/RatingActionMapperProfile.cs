@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BulletinBoardAPI.DTO.Rating;
 using BulletinBoardAPI.Models.Realizations;
+using Web.DTO.Rating;
 
-namespace BulletinBoardAPI.Mapper
+namespace Web.Mapper
 {
     public class RatingActionMapperProfile : Profile
     {

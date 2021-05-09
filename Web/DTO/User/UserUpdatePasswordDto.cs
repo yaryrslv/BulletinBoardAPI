@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.DTO.User
+﻿namespace Web.DTO.User
 {
     public class UserUpdatePasswordDto
     {

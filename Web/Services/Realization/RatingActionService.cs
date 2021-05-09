@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BulletinBoardAPI.Models.Realizations;
-using BulletinBoardAPI.Services.Abstractions;
 using Data.EF;
 using Microsoft.EntityFrameworkCore;
+using Web.Services.Abstractions;
 
-namespace BulletinBoardAPI.Services.Realization
+namespace Web.Services.Realization
 {
     public class RatingActionService : IRatingActionService
     {
@@ -34,22 +34,22 @@ namespace BulletinBoardAPI.Services.Realization
             ratingAction.Id = Guid.NewGuid();
             ratingAction.Time = DateTime.Now;
             await _context.RatingActions.AddAsync(ratingAction);
-            await _context.SaveChangesAsync();
             var ratedByIdAd = await GetAllByAdIdAsync(ratingAction.AdId);
             var ratedByIdAdCount = ratedByIdAd.Count();
             var currentRatedAd = await _context.Ads.FindAsync(ratingAction.AdId);
             currentRatedAd.Rating = ratedByIdAdCount;
+            currentRatedAd.Rating++;
             _context.Ads.Update(currentRatedAd);
             await _context.SaveChangesAsync();
         }
         public async Task RemoveAsync(RatingAction ratingAction)
         {
             _context.RatingActions.Remove(ratingAction);
-            await _context.SaveChangesAsync();
             var ratedByIdAd = await GetAllByAdIdAsync(ratingAction.AdId);
             var ratedByIdAdCount = ratedByIdAd.Count();
             var currentRatedAd = await _context.Ads.FindAsync(ratingAction.AdId);
             currentRatedAd.Rating = ratedByIdAdCount;
+            currentRatedAd.Rating--;
             _context.Ads.Update(currentRatedAd);
             await _context.SaveChangesAsync();
         }
