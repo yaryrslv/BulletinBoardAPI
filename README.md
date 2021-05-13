@@ -18,6 +18,7 @@
 "AdminRegistrationKeyMD5Hash": "MD5Value" MD5 хеш ключа, для регистрации пользователей с Admin правами.  
 Если используются стандартный хост и порт, лучше оставить значения по умолчанию.  
 2. Миграция базы данных:  
+(Перед миграцией обязательно выбрать Data в качестве проекта по умолчанию для миграции)  
 Выполнить в .NET Core CLI:  
 `dotnet ef migrations add InitialCreate`  
 `dotnet ef database update`  
