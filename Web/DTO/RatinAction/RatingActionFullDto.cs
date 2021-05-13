@@ -1,9 +1,8 @@
 ﻿using System;
-using Data.Models.Abstractions;
 
-namespace Data.Models.Realizations
+namespace Web.DTO.RatinAction
 {
-    public class RatingAction : IRatingAction
+    public class RatingActionFullDto
     {
         public Guid Id { get; set; }
         public DateTime Time { get; set; }

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Controllers.Abstractions;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Controllers.Abstractions;
+using Web.DTO.RatinAction;
 using Web.DTO.Rating;
 using Web.Services.Abstractions;
+using Web.Services.Realization;
 
 namespace Web.Controllers.Realizations
 {
@@ -30,7 +30,7 @@ namespace Web.Controllers.Realizations
         /// </summary>
         [Authorize]
         [HttpGet("getall", Name = "GetAllRatingActions")]
-        public async Task<IEnumerable<RatingAction>> GetAllAsync()
+        public async Task<IEnumerable<RatingActionFullDto>> GetAllAsync()
         {
             return await _ratingActionService.GetAllAsync();
         }
@@ -67,8 +67,8 @@ namespace Web.Controllers.Realizations
                     Message = "Wrong input data"
                 });
             }
-            var ad = await _adService.GetByIdAsync(ratingActionDto.AdId);
-            if (ad == null)
+            var adFullDto = await _adService.GetByIdAsync(ratingActionDto.AdId);
+            if (adFullDto == null)
             {
                 return NotFound(new Response()
                 {
@@ -77,19 +77,20 @@ namespace Web.Controllers.Realizations
                 });
             }
             var currentUserName = HttpContext.User.Identity?.Name;
-            if (await _ratingActionService.IsRated(ad.Id, currentUserName))
+            if (await _ratingActionService.IsRated(adFullDto.Id, currentUserName))
             {
                 return Conflict(new Response()
                 {
                     Status = "Conflict",
                     Message = "The ad has already been rated"
                 });
-            } 
-            var ratingAction = new RatingAction();
-            ratingAction = _mapper.Map(ratingActionDto, ratingAction);
-            ratingAction.UserName = currentUserName;
-            await _ratingActionService.AddAsync(ratingAction);
-            return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
+            }
+            RatingActionFullDto ratingActionFullDto = _mapper.Map<RatingActionFullDto>(ratingActionDto);
+            ratingActionFullDto.UserName = currentUserName;
+            ratingActionFullDto.Id = Guid.NewGuid();
+            adFullDto.Rating++;
+            await _ratingActionService.AddAsync(ratingActionFullDto);
+            return CreatedAtRoute("GetAdById", new { id = adFullDto.Id }, adFullDto);
         }
         /// <summary>
         /// [AuthorizeRequired] Removes existing RatingAction.
@@ -98,8 +99,8 @@ namespace Web.Controllers.Realizations
         [HttpDelete("removebyid/{adId}")]
         public async Task<IActionResult> RemoveByIdAsync(Guid adId)
         {
-            var ad = await _adService.GetByIdAsync(adId);
-            if (ad == null)
+            var adFullDto = await _adService.GetByIdAsync(adId);
+            if (adFullDto == null)
             {
                 return NotFound(new Response()
                 {
@@ -108,7 +109,7 @@ namespace Web.Controllers.Realizations
                 });
             }
             var currentUserName = HttpContext.User.Identity?.Name;
-            if (await _ratingActionService.IsRated(ad.Id, currentUserName) == false)
+            if (await _ratingActionService.IsRated(adFullDto.Id, currentUserName) == false)
             {
                 return Conflict(new Response()
                 {
@@ -116,9 +117,10 @@ namespace Web.Controllers.Realizations
                     Message = "This ad has not yet been rated"
                 });
             }
-            var ratingAction = await _ratingActionService.GetByAdIdAndUserNameAsync(adId, currentUserName);
-            await _ratingActionService.RemoveAsync(ratingAction);
-            return CreatedAtRoute("GetAdById", new { id = ad.Id }, ad);
+            var ratingActionDto = await _ratingActionService.GetByAdIdAndUserNameAsync(adId, currentUserName);
+            adFullDto.Rating--;
+            await _ratingActionService.RemoveAsync(ratingActionDto);
+            return CreatedAtRoute("GetAdById", new { id = adFullDto.Id }, adFullDto);
         }
     }
 }

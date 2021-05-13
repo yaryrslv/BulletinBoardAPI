@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Controllers.Abstractions;
 using BulletinBoardAPI.Models.Realizations;
-using Data.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
-using Web.Services.Abstractions;
+using Web.Services.Realization;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
 
 namespace Web.Controllers.Realizations
@@ -33,7 +31,7 @@ namespace Web.Controllers.Realizations
         /// </summary>
         [Authorize]
         [HttpGet("getall", Name = "GetAllAds")]
-        public async Task<IEnumerable<Ad>> GetAllAsync()
+        public async Task<IEnumerable<AdFullDto>> GetAllAsync()
         {
             return await _adService.GetAllAsync();
         }
@@ -42,7 +40,7 @@ namespace Web.Controllers.Realizations
         /// </summary>
         [Authorize]
         [HttpGet("getallactual", Name = "GetAllActualAds")]
-        public async Task<IEnumerable<Ad>> GetAllActualAsync()
+        public async Task<IEnumerable<AdFullDto>> GetAllActualAsync()
         {
             return await _adService.GetAllActualAsync();
         }
@@ -69,7 +67,7 @@ namespace Web.Controllers.Realizations
         /// </summary>
         [Authorize]
         [HttpGet("getbyusername/{name}", Name = "GetAdsByName")]
-        public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
+        public async Task<IEnumerable<AdFullDto>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
@@ -107,8 +105,8 @@ namespace Web.Controllers.Realizations
                 });
             }
             var userName = HttpContext.User.Identity?.Name;
-            var ad = _mapper.Map<Ad>(adDto);
-            ad.UserName = userName;
+            var adFullDto = _mapper.Map<AdFullDto>(adDto);
+            adFullDto.UserName = userName;
             var userAds = await _adService.GetByNameAsync(userName);
             var userAdsCount = userAds.Count();
             if (userAdsCount >= int.Parse(Configuration["MaxUserAds"]))
@@ -119,8 +117,10 @@ namespace Web.Controllers.Realizations
                     Message = "User Ads count quota exceeded"
                 });
             }
-            await _adService.CreateAsync(ad);
-            return CreatedAtRoute("GetAdById", new { id = ad.Id}, ad);
+            adFullDto.Id = Guid.NewGuid();
+            await _adService.CreateAsync(adFullDto);
+            var updatedAdFullDto = _adService.GetByIdAsync(adFullDto.Id);
+            return CreatedAtRoute("GetAdById", new { id = updatedAdFullDto.Id}, updatedAdFullDto);
         }
         /// <summary>
         /// [AuthorizeRequired] Updates the Ad of the current current Authorized identity User by its Id.
@@ -165,8 +165,8 @@ namespace Web.Controllers.Realizations
         [HttpDelete("deletebyid/{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var adForDelete = await _adService.GetByIdAsync(id);
-            if (adForDelete == null)
+            var adForDeleteDto = await _adService.GetByIdAsync(id);
+            if (adForDeleteDto == null)
             {
                 return NotFound(new Response()
                 {
@@ -174,7 +174,7 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            if (HttpContext.User.Identity?.Name != adForDelete.UserName)
+            if (HttpContext.User.Identity?.Name != adForDeleteDto.UserName)
             {
                 return NotFound(new Response()
                 {
@@ -182,8 +182,8 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            var deletedAd = await _adService.DeleteAsync(adForDelete);
-            return new ObjectResult(deletedAd);
+            var deletedAdDto = await _adService.DeleteAsync(adForDeleteDto);
+            return new ObjectResult(deletedAdDto);
         }
     }
 }

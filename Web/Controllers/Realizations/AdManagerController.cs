@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Models.Realizations;
-using Data.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Controllers.Abstractions;
 using Web.DTO.Ad;
-using Web.Services.Abstractions;
+using Web.Services.Realization;
 
 namespace Web.Controllers.Realizations
 {
@@ -29,8 +27,9 @@ namespace Web.Controllers.Realizations
         /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getall", Name = "ManagerGetAllAds")]
-        public async Task<IEnumerable<Ad>> GetAllAsync()
+        public async Task<IEnumerable<AdFullDto>> GetAllAsync()
         {
+
             return await _adService.GetAllAsync();
         }
         /// <summary>
@@ -40,8 +39,8 @@ namespace Web.Controllers.Realizations
         [HttpGet("getbyadid/{id}", Name = "ManagerGetAd")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            Ad ad = await _adService.GetByIdAsync(id);
-            if (ad == null)
+            var adFullDto = await _adService.GetByIdAsync(id);
+            if (adFullDto == null)
             {
                 return NotFound(new Response()
                 {
@@ -49,14 +48,14 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            return new ObjectResult(ad);
+            return new ObjectResult(adFullDto);
         }
         /// <summary>
         /// [AdminRightsRequrered] Get Ad of any User by Id in extended format.
         /// </summary>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getbyusername/{name}", Name = "ManagerGetAdByName")]
-        public async Task<IEnumerable<Ad>> GetByNameAsync(string name)
+        public async Task<IEnumerable<AdFullDto>> GetByNameAsync(string name)
         {
             return await _adService.GetByNameAsync(name);
         }
@@ -75,8 +74,8 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            var updatedAd = await _adService.GetByIdAsync(id);
-            if (updatedAd == null || updatedAd.Id != id)
+            var updatedAdFullDto = await _adService.GetByIdAsync(id);
+            if (updatedAdFullDto == null || updatedAdFullDto.Id != id)
             {
                 return BadRequest(new Response()
                 {
@@ -84,9 +83,9 @@ namespace Web.Controllers.Realizations
                     Message = "Wrong input data"
                 });
             }
-            updatedAd = _mapper.Map(updatedAdDto, updatedAd);
-            await _adService.UpdateAsync(updatedAd);
-            return CreatedAtRoute("ManagerGetAd", new { id = updatedAd.Id }, updatedAd);
+            updatedAdFullDto = _mapper.Map(updatedAdDto, updatedAdFullDto);
+            await _adService.UpdateAsync(updatedAdFullDto);
+            return CreatedAtRoute("ManagerGetAd", new { id = updatedAdFullDto.Id }, updatedAdFullDto);
         }
         /// <summary>
         /// [AdminRightsRequrered] Deletes any Ad of any User by Id.
@@ -104,9 +103,9 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            var deletedAd = await _adService.DeleteAsync(adForDelete);
+            var deletedAdFullDto = await _adService.DeleteAsync(adForDelete);
 
-            return new ObjectResult(deletedAd);
+            return new ObjectResult(deletedAdFullDto);
         }
     }
 }

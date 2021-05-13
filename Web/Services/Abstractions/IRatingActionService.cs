@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BulletinBoardAPI.Models.Realizations;
+using Web.DTO.RatinAction;
 
 namespace Web.Services.Abstractions
 {
     public interface IRatingActionService
     {
-        Task<IEnumerable<RatingAction>> GetAllAsync();
-        Task<IEnumerable<RatingAction>> GetAllByAdIdAsync(Guid id);
-        Task<RatingAction> GetByAdIdAndUserNameAsync(Guid id, string userName);
-        Task AddAsync(RatingAction ratingAction);
-        Task RemoveAsync(RatingAction ratingAction);
+        Task<IEnumerable<RatingActionFullDto>> GetAllAsync();
+        Task<IEnumerable<RatingActionFullDto>> GetAllByAdIdAsync(Guid id);
+        Task<RatingActionFullDto> GetByAdIdAndUserNameAsync(Guid id, string userName);
+        Task AddAsync(RatingActionFullDto ratingActionFullDto);
+        Task RemoveAsync(RatingActionFullDto ratingActionFullDto);
         Task<bool> IsRated(Guid adId, string userName);
     }
 }

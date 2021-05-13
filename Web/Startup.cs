@@ -83,8 +83,10 @@ namespace Web
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddDbContext<BulletinBoardContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"],
-                x => x.MigrationsAssembly("Data")));
+            services.AddDbContext<BulletinBoardContext>(options => 
+                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"],
+                x => x.MigrationsAssembly("Data"))
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<BulletinBoardContext>()
                 .AddDefaultTokenProviders();
