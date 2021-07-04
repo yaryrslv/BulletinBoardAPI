@@ -445,3 +445,4 @@ Web/appsettings.json
 Data/Migrations/20210704124643_InitialCreate.cs
 Data/Migrations/20210704124643_InitialCreate.Designer.cs
 Data/Migrations/BulletinBoardContextModelSnapshot.cs
+Web/appsettings.json
