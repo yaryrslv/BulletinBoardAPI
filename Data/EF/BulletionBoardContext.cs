@@ -17,7 +17,7 @@ namespace Data.EF
             base.OnModelCreating(builder);
             builder.Entity<Ad>(b =>
             {
-                b.HasIndex(p => p.Id).IsUnique();
+                b.HasIndex(p => p.Id);
                 b.Property(p => p.Number).IsRequired().HasMaxLength(512);
                 b.Property(p => p.UserName).IsRequired().HasMaxLength(512);
                 b.Property(p => p.Text).IsRequired().HasMaxLength(2048);
@@ -35,7 +35,6 @@ namespace Data.EF
                 .HasDefaultValueSql("NEXT VALUE FOR DBSequence");
             builder.Entity<RatingAction>(b =>
             {
-                b.HasIndex(p => p.Id).IsUnique();
                 b.Property(p => p.AdId).IsRequired();
                 b.Property(p => p.UserName).IsRequired().HasMaxLength(512);
                 b.Property(p => p.Time).IsRequired();
