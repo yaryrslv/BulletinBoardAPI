@@ -6,6 +6,7 @@ using AutoMapper;
 using Data.EF;
 using Data.Models.Realizations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
 using Web.Services.Realization;
 
@@ -15,10 +16,13 @@ namespace Web.Services.Abstractions
     {
         private BulletinBoardContext _context;
         private readonly IMapper _mapper;
-        public AdService(BulletinBoardContext context, IMapper mapper)
+        public IConfiguration Configuration { get; }
+        public AdService(BulletinBoardContext context, IMapper mapper,
+            IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
+            Configuration = configuration;
         }
         public async Task<IEnumerable<AdFullDto>> GetAllAsync()
         {
@@ -64,13 +68,17 @@ namespace Web.Services.Abstractions
         }
         public async Task CreateAsync(AdFullDto adFullDto)
         {
-            
-            adFullDto.CreateDate = DateTime.Now;
-            adFullDto.ExpirationDite = adFullDto.CreateDate.AddMonths(1);
-            adFullDto.Rating = 0;
-            var ad = _mapper.Map<Ad>(adFullDto);
-            await _context.Ads.AddAsync(ad);
-            await _context.SaveChangesAsync();
+            var user = _context.Users.FirstOrDefault(i => i.Id == adFullDto.UserId);
+            var adsCount = _context.Ads.Where(i => i.User.Id == user.Id).Count();
+            if (adsCount < int.Parse(Configuration["MaxUserAds"]))
+            {
+                adFullDto.CreateDate = DateTime.Now;
+                adFullDto.ExpirationDite = adFullDto.CreateDate.AddMonths(1);
+                adFullDto.Rating = 0;
+                var ad = _mapper.Map<Ad>(adFullDto);
+                await _context.Ads.AddAsync(ad);
+                await _context.SaveChangesAsync();
+            }
         }
         public async Task UpdateAsync(AdFullDto adFullDto)
         {

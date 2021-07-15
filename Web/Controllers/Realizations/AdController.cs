@@ -128,9 +128,20 @@ namespace Web.Controllers.Realizations
             var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
             var adFullDto = _mapper.Map<AdFullDto>(adDto);
             adFullDto.UserId = user.Id;
-            var userAds = await _adService.GetByNameAsync(userName);
-            var userAdsCount = userAds.Count();
-            if (userAdsCount >= int.Parse(Configuration["MaxUserAds"]))
+            //var userAds = await _adService.GetByNameAsync(userName);
+            //var userAdsCount = userAds.Count();
+            //if (userAdsCount >= int.Parse(Configuration["MaxUserAds"]))
+            //{
+            //    return BadRequest(new Response()
+            //    {
+            //        Status = "BadRequest",
+            //        Message = "User Ads count quota exceeded"
+            //    });
+            //}
+            adFullDto.Id = Guid.NewGuid();
+            await _adService.CreateAsync(adFullDto);
+            var updatedAdFullDto = _adService.GetByIdAsync(adFullDto.Id);
+            if (updatedAdFullDto.Result == null)
             {
                 return BadRequest(new Response()
                 {
@@ -138,9 +149,6 @@ namespace Web.Controllers.Realizations
                     Message = "User Ads count quota exceeded"
                 });
             }
-            adFullDto.Id = Guid.NewGuid();
-            await _adService.CreateAsync(adFullDto);
-            var updatedAdFullDto = _adService.GetByIdAsync(adFullDto.Id);
             return CreatedAtRoute("GetAdById", new { id = updatedAdFullDto.Id}, updatedAdFullDto);
         }
         /// <summary>
