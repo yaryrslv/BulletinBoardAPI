@@ -1,5 +1,6 @@
 ﻿using BulletinBoardAPI.Models.Realizations;
 using Data.Models.Realizations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace Data.EF
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            this.SeedRoles(builder);
             builder.Entity<Ad>(b =>
             {
                 b.HasIndex(p => p.Id);
@@ -41,5 +43,13 @@ namespace Data.EF
             });
 
         }
+        private void SeedRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityRole>().HasData(
+                new IdentityRole() { Id = "fab4fac1-c546-41de-aebc-a14da6895711", Name = "Admin", ConcurrencyStamp = "0", NormalizedName = "Admin" },
+                new IdentityRole() { Id = "c7b013f0-5201-4317-abd8-c211f91b7330", Name = "User", ConcurrencyStamp = "1", NormalizedName = "User" }
+            );
+        }
+
     }
 }

@@ -135,18 +135,7 @@ namespace Web.Controllers.Realizations
                     Message = result.ToString()
                 });
             }
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            }
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-            }
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
         /// <summary>
@@ -214,20 +203,9 @@ namespace Web.Controllers.Realizations
                     Status = "BadRequest",
                     Message = result.ToString()
                 });
-            } 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin)) 
-            {
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
             }
-            
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User)) 
-            {
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-            } 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin)) 
-            { 
-                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            }
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
         /// <summary>
