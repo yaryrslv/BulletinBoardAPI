@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
+using Web.FluentValidator;
 using Web.Services.Realization;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
 
@@ -106,6 +107,21 @@ namespace Web.Controllers.Realizations
                 {
                     Status = "BadRequest",
                     Message = "Wrong input data"
+                });
+            }
+            var validator = new AdDtoValidator();
+            var result = validator.Validate(adDto);
+            if (!result.IsValid)
+            {
+                string errorsString = "";
+                foreach (var error in result.Errors)
+                {
+                    errorsString += error + " | ";
+                }
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = errorsString
                 });
             }
             var userName = HttpContext.User.Identity.Name;
