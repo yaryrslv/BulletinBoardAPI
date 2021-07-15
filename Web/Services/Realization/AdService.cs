@@ -49,7 +49,8 @@ namespace Web.Services.Abstractions
         }
         public async Task<IEnumerable<AdFullDto>> GetByNameAsync(string name)
         {
-            var ads = await _context.Ads.Where(i => i.UserName == name).ToListAsync();
+            var user = _context.Users.FirstOrDefault(i => i.UserName == name);
+            var ads = _context.Ads.Where(i => i.UserId == user.Id).ToList();
             IEnumerable<AdFullDto> adFullDtos;
             adFullDtos = _mapper.Map(ads, (IEnumerable<AdFullDto>)null);
             return adFullDtos;

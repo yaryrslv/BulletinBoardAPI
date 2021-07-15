@@ -19,7 +19,6 @@ namespace Data.EF
             {
                 b.HasIndex(p => p.Id);
                 b.Property(p => p.Number).IsRequired().HasMaxLength(512);
-                b.Property(p => p.UserName).IsRequired().HasMaxLength(512);
                 b.Property(p => p.Text).IsRequired().HasMaxLength(2048);
                 b.Property(p => p.Rating).IsRequired().HasDefaultValue(0);
                 b.Property(p => p.CreateDate).IsRequired();

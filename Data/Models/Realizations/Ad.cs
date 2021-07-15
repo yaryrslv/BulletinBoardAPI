@@ -1,4 +1,5 @@
 ﻿using System;
+using BulletinBoardAPI.Models.Realizations;
 using Data.Models.Abstractions;
 
 namespace Data.Models.Realizations
@@ -7,7 +8,8 @@ namespace Data.Models.Realizations
     {
         public Guid Id { get; set; }
         public int Number { get; set; }
-        public string UserName { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
         public string City { get; set; }
         public string Text { get; set; }
         public string ImageUrl { get; set; }

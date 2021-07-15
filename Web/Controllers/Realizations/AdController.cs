@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
@@ -19,12 +20,15 @@ namespace Web.Controllers.Realizations
     {
         private readonly IAdService _adService;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
         public IConfiguration Configuration { get; }
-        public AdController(IAdService adService, IMapper mapper, IConfiguration configuration)
+        public AdController(IAdService adService, IMapper mapper, 
+            IConfiguration configuration, UserManager<User> userManager)
         {
             _adService = adService;
             _mapper = mapper;
             Configuration = configuration;
+            _userManager = userManager;
         }
         /// <summary>
         /// [AuthorizeRequired] Get all existing Ads.
@@ -104,9 +108,10 @@ namespace Web.Controllers.Realizations
                     Message = "Wrong input data"
                 });
             }
-            var userName = HttpContext.User.Identity?.Name;
+            var userName = HttpContext.User.Identity.Name;
+            var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
             var adFullDto = _mapper.Map<AdFullDto>(adDto);
-            adFullDto.UserName = userName;
+            adFullDto.UserId = user.Id;
             var userAds = await _adService.GetByNameAsync(userName);
             var userAdsCount = userAds.Count();
             if (userAdsCount >= int.Parse(Configuration["MaxUserAds"]))
@@ -129,6 +134,8 @@ namespace Web.Controllers.Realizations
         [HttpPut("updatebyid/{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto)
         {
+            var userName = HttpContext.User.Identity.Name;
+            var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
             if (updatedAdDto == null)
             {
                 return BadRequest(new Response()
@@ -146,7 +153,7 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            if (HttpContext.User.Identity?.Name != ad.UserName)
+            if (user.Id != ad.UserId)
             {
                 return Conflict(new Response()
                 {
@@ -174,7 +181,10 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            if (HttpContext.User.Identity?.Name != adForDeleteDto.UserName)
+
+            var userName = HttpContext.User.Identity?.Name;
+            var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
+            if (user.Id != adForDeleteDto.UserId)
             {
                 return NotFound(new Response()
                 {
