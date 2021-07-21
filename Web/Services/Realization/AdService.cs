@@ -69,15 +69,27 @@ namespace Web.Services.Abstractions
         public async Task CreateAsync(AdFullDto adFullDto)
         {
             var user = _context.Users.FirstOrDefault(i => i.Id == adFullDto.UserId);
-            var adsCount = _context.Ads.Where(i => i.User.Id == user.Id).Count();
-            if (adsCount < int.Parse(Configuration["MaxUserAds"]))
+            adFullDto.CreateDate = DateTime.Now;
+            adFullDto.ExpirationDite = adFullDto.CreateDate.AddMonths(1);
+            adFullDto.Rating = 0;
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                adFullDto.CreateDate = DateTime.Now;
-                adFullDto.ExpirationDite = adFullDto.CreateDate.AddMonths(1);
-                adFullDto.Rating = 0;
-                var ad = _mapper.Map<Ad>(adFullDto);
-                await _context.Ads.AddAsync(ad);
+
+                var ad = _mapper.Map<Ad>(adFullDto); 
+                await _context.Ads.AddAsync(ad); 
                 await _context.SaveChangesAsync();
+
+                var adsCount = _context.Ads.Where(i => i.User.Id == user.Id).Count();
+                if (adsCount <= int.Parse(Configuration["MaxUserAds"]))
+                {
+                    transaction.Commit();
+                }
+                else
+                {
+                    transaction.Rollback();
+                }
+
             }
         }
         public async Task UpdateAsync(AdFullDto adFullDto)
