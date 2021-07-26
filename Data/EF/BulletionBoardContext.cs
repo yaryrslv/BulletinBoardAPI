@@ -1,5 +1,4 @@
-﻿using BulletinBoardAPI.Models.Realizations;
-using Data.Models.Realizations;
+﻿using Data.Models.Realizations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

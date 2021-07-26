@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Data.Models.Realizations;
 using Microsoft.AspNetCore.Identity;
 
-namespace BulletinBoardAPI.Models.Realizations
+namespace Data.Models.Realizations
 {
     public class User : IdentityUser
     {
