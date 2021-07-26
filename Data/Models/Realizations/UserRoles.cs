@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.Models.Realizations
+﻿namespace Data.Models.Realizations
 {
     public static class UserRoles
     {

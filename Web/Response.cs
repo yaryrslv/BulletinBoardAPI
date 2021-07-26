@@ -1,4 +1,4 @@
-﻿namespace BulletinBoardAPI.Models.Realizations
+﻿namespace Web
 {
     public class Response
     {

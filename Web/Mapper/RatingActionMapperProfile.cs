@@ -2,7 +2,6 @@
 using BulletinBoardAPI.Models.Realizations;
 using Data.Models.Realizations;
 using Web.DTO.RatinAction;
-using Web.DTO.Rating;
 
 namespace Web.Mapper
 {

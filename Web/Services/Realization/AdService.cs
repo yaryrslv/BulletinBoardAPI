@@ -8,9 +8,9 @@ using Data.Models.Realizations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
-using Web.Services.Realization;
+using Web.Services.Abstractions;
 
-namespace Web.Services.Abstractions
+namespace Web.Services.Realization
 {
     public class AdService : IAdService
     {
@@ -53,8 +53,8 @@ namespace Web.Services.Abstractions
         }
         public async Task<IEnumerable<AdFullDto>> GetByNameAsync(string name)
         {
-            var user = _context.Users.FirstOrDefault(i => i.UserName == name);
-            var ads = _context.Ads.Where(i => i.UserId == user.Id).ToList();
+            var user = await _context.Users.FirstOrDefaultAsync(i => i.UserName == name);
+            var ads = await _context.Ads.Where(i => i.UserId == user.Id).ToListAsync();
             IEnumerable<AdFullDto> adFullDtos;
             adFullDtos = _mapper.Map(ads, (IEnumerable<AdFullDto>)null);
             return adFullDtos;

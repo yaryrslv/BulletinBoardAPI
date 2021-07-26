@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web.DTO.RatinAction;
-using Web.DTO.Rating;
 
-namespace Web.Controllers.Realizations
+namespace Web.Controllers.Abstractions
 {
     public interface IRatingActionController
     {
