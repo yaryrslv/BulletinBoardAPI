@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Web.DTO.Ad
 {
@@ -9,7 +6,7 @@ namespace Web.DTO.Ad
     {
         public Guid Id { get; set; }
         public int Number { get; set; }
-        public string UserName { get; set; }
+        public string UserId { get; set; }
         public string City { get; set; }
         public string Text { get; set; }
         public string ImageUrl { get; set; }

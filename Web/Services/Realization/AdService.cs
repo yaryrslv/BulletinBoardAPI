@@ -6,19 +6,23 @@ using AutoMapper;
 using Data.EF;
 using Data.Models.Realizations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Web.DTO.Ad;
-using Web.Services.Realization;
+using Web.Services.Abstractions;
 
-namespace Web.Services.Abstractions
+namespace Web.Services.Realization
 {
     public class AdService : IAdService
     {
         private BulletinBoardContext _context;
         private readonly IMapper _mapper;
-        public AdService(BulletinBoardContext context, IMapper mapper)
+        public IConfiguration Configuration { get; }
+        public AdService(BulletinBoardContext context, IMapper mapper,
+            IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
+            Configuration = configuration;
         }
         public async Task<IEnumerable<AdFullDto>> GetAllAsync()
         {
@@ -49,7 +53,8 @@ namespace Web.Services.Abstractions
         }
         public async Task<IEnumerable<AdFullDto>> GetByNameAsync(string name)
         {
-            var ads = await _context.Ads.Where(i => i.UserName == name).ToListAsync();
+            var user = await _context.Users.FirstOrDefaultAsync(i => i.UserName == name);
+            var ads = await _context.Ads.Where(i => i.UserId == user.Id).ToListAsync();
             IEnumerable<AdFullDto> adFullDtos;
             adFullDtos = _mapper.Map(ads, (IEnumerable<AdFullDto>)null);
             return adFullDtos;
@@ -63,13 +68,29 @@ namespace Web.Services.Abstractions
         }
         public async Task CreateAsync(AdFullDto adFullDto)
         {
-            
+            var user = _context.Users.FirstOrDefault(i => i.Id == adFullDto.UserId);
             adFullDto.CreateDate = DateTime.Now;
             adFullDto.ExpirationDite = adFullDto.CreateDate.AddMonths(1);
             adFullDto.Rating = 0;
-            var ad = _mapper.Map<Ad>(adFullDto);
-            await _context.Ads.AddAsync(ad);
-            await _context.SaveChangesAsync();
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+
+                var ad = _mapper.Map<Ad>(adFullDto); 
+                await _context.Ads.AddAsync(ad); 
+                await _context.SaveChangesAsync();
+
+                var adsCount = _context.Ads.Where(i => i.User.Id == user.Id).Count();
+                if (adsCount <= int.Parse(Configuration["MaxUserAds"]))
+                {
+                    transaction.Commit();
+                }
+                else
+                {
+                    transaction.Rollback();
+                }
+
+            }
         }
         public async Task UpdateAsync(AdFullDto adFullDto)
         {

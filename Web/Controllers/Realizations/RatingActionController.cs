@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.Controllers.Abstractions;
 using Web.DTO.RatinAction;
-using Web.DTO.Rating;
 using Web.Services.Abstractions;
-using Web.Services.Realization;
 
 namespace Web.Controllers.Realizations
 {

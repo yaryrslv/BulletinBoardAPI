@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Models.Realizations;
+using Data.Models.Realizations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Web.Controllers.Abstractions;
 using Web.DTO.User;
+using Web.FluentValidator;
 
 namespace Web.Controllers.Realizations
 {
@@ -87,6 +88,21 @@ namespace Web.Controllers.Realizations
         [Route("register")]
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterDto userRegisterDto)
         {
+            var validator = new UserRegisterDtoValidator();
+            var result = validator.Validate(userRegisterDto);
+            if (!result.IsValid)
+            {
+                string errorsString = "";
+                foreach (var error in result.Errors)
+                {
+                    errorsString += error + " | ";
+                }
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = errorsString
+                });
+            }
             var userExists = await _userManager.FindByNameAsync(userRegisterDto.Username); 
             if (userExists != null) 
             {
@@ -95,7 +111,7 @@ namespace Web.Controllers.Realizations
                     Status = "Conflict",
                     Message = "User already exists"
                 });
-            } 
+            }
             var emailExists = await _userManager.FindByEmailAsync(userRegisterDto.Email); 
             if (emailExists != null) 
             {
@@ -110,8 +126,8 @@ namespace Web.Controllers.Realizations
                 SecurityStamp = Guid.NewGuid().ToString()
             }; 
             user = _mapper.Map(userRegisterDto, user); 
-            var result = await _userManager.CreateAsync(user, userRegisterDto.Password); 
-            if (!result.Succeeded) 
+            var managerResult = await _userManager.CreateAsync(user, userRegisterDto.Password); 
+            if (!managerResult.Succeeded) 
             {
                 return BadRequest(new Response()
                 {
@@ -119,18 +135,7 @@ namespace Web.Controllers.Realizations
                     Message = result.ToString()
                 });
             }
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            }
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-            }
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
         /// <summary>
@@ -141,6 +146,21 @@ namespace Web.Controllers.Realizations
         [Route("registeradmin")]
         public async Task<IActionResult> RegisterAdminAsync(string adminRegistrationKey, [FromBody] UserRegisterDto userRegisterDto)
         {
+            var validator = new UserRegisterDtoValidator();
+            var result = validator.Validate(userRegisterDto);
+            if (!result.IsValid)
+            {
+                string errorsString = "";
+                foreach (var error in result.Errors)
+                {
+                    errorsString += error + " | ";
+                }
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = errorsString
+                });
+            }
             var md5 = MD5.Create();
             var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(adminRegistrationKey));
             var hashString = BitConverter.ToString(hash).Replace("-", "");
@@ -175,28 +195,17 @@ namespace Web.Controllers.Realizations
                 SecurityStamp = Guid.NewGuid().ToString()
             }; 
             user = _mapper.Map(userRegisterDto, user); 
-            var result = await _userManager.CreateAsync(user, userRegisterDto.Password); 
-            if (!result.Succeeded) 
+            var managerResult = await _userManager.CreateAsync(user, userRegisterDto.Password); 
+            if (!managerResult.Succeeded) 
             {
                 return BadRequest(new Response()
                 {
                     Status = "BadRequest",
                     Message = result.ToString()
                 });
-            } 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin)) 
-            {
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
             }
-            
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User)) 
-            {
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-            } 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin)) 
-            { 
-                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            }
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+
             return CreatedAtRoute("GetUserById", new {id = user.Id}, user);
         }
         /// <summary>
@@ -254,6 +263,21 @@ namespace Web.Controllers.Realizations
         [HttpPut("updateemail")]
         public async Task<IActionResult> UpdateEmailAsync([FromBody] UserUpdateEmailDto userUpdateEMailDto)
         {
+            var validator = new UserUpdateEmailDtoValidator();
+            var result = validator.Validate(userUpdateEMailDto);
+            if (!result.IsValid)
+            {
+                string errorsString = "";
+                foreach (var error in result.Errors)
+                {
+                    errorsString += error + " | ";
+                }
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = errorsString
+                });
+            }
             var emailExists = await _userManager.FindByEmailAsync(userUpdateEMailDto.Email);
             if (emailExists != null)
             {
@@ -300,6 +324,21 @@ namespace Web.Controllers.Realizations
         [HttpPut("updatphonenumber")]
         public async Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserUpdatePhoneNumberDto updatePhoneNumberDto)
         {
+            var validator = new UserUpdatePhoneNumberDtoValidator();
+            var result = validator.Validate(updatePhoneNumberDto);
+            if (!result.IsValid)
+            {
+                string errorsString = "";
+                foreach (var error in result.Errors)
+                {
+                    errorsString += error + " | ";
+                }
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = errorsString
+                });
+            }
             var userName = HttpContext.User.Identity?.Name;
             var user = await _userManager.FindByNameAsync(userName);
             if (userName == null || user == null)
@@ -329,6 +368,21 @@ namespace Web.Controllers.Realizations
         [HttpPut("updatepassword")]
         public async Task<IActionResult> UpdatePasswordAsync([FromBody] UserUpdatePasswordDto userUpdatePasswordDto)
         {
+            var validator = new UserUpdatePasswordDtoValidator();
+            var result = validator.Validate(userUpdatePasswordDto);
+            if (!result.IsValid)
+            {
+                string errorsString = "";
+                foreach (var error in result.Errors)
+                {
+                    errorsString += error + " | ";
+                }
+                return BadRequest(new Response()
+                {
+                    Status = "BadRequest",
+                    Message = errorsString
+                });
+            }
             var userToken = HttpContext.Request.Headers["Authorization"].ToString();
             if (userToken == string.Empty)
             {

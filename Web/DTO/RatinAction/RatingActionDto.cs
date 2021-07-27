@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Web.DTO.Rating
+namespace Web.DTO.RatinAction
 {
     public class RatingActionDto
     {

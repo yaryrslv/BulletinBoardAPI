@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using BulletinBoardAPI.Models.Realizations;
+using Data.Models.Realizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.Controllers.Abstractions;
 using Web.DTO.Ad;
-using Web.Services.Realization;
+using Web.Services.Abstractions;
 
 namespace Web.Controllers.Realizations
 {

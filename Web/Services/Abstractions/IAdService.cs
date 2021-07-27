@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.DTO.Ad;
 
-namespace Web.Services.Realization
+namespace Web.Services.Abstractions
 {
     public interface IAdService
     {

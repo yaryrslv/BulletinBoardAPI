@@ -441,3 +441,8 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 .vs/BulletinBoardAPI/DesignTimeBuild/.dtbcache.v2
+Web/appsettings.json
+Data/Migrations/20210704124643_InitialCreate.cs
+Data/Migrations/20210704124643_InitialCreate.Designer.cs
+Data/Migrations/BulletinBoardContextModelSnapshot.cs
+Web/appsettings.json

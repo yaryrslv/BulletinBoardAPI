@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web.DTO.Ad;
 
-namespace Web.Controllers.Realizations
+namespace Web.Controllers.Abstractions
 {
     public interface IAdController
     {
