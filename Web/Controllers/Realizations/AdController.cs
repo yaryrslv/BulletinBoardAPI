@@ -12,7 +12,6 @@ using Web.Controllers.Abstractions;
 using Web.DTO.Ad;
 using Web.FluentValidator;
 using Web.Services.Abstractions;
-using Web.Services.Realization;
 using ObjectResult = Microsoft.AspNetCore.Mvc.ObjectResult;
 
 namespace Web.Controllers.Realizations
@@ -126,10 +125,10 @@ namespace Web.Controllers.Realizations
                     Message = errorsString
                 });
             }
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext.User.Identity?.Name;
             var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
             var adFullDto = _mapper.Map<AdFullDto>(adDto);
-            adFullDto.UserId = user.Id;
+            adFullDto.UserId = user?.Id;
             adFullDto.Id = Guid.NewGuid();
             await _adService.CreateAsync(adFullDto);
             var updatedAdFullDto = _adService.GetByIdAsync(adFullDto.Id);
@@ -142,7 +141,7 @@ namespace Web.Controllers.Realizations
         [HttpPut("updatebyid/{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] AdDto updatedAdDto)
         {
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext.User.Identity?.Name;
             var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
             if (updatedAdDto == null)
             {
@@ -161,7 +160,7 @@ namespace Web.Controllers.Realizations
                     Message = "Ad not found"
                 });
             }
-            if (user.Id != ad.UserId)
+            if (user?.Id != ad.UserId)
             {
                 return Conflict(new Response()
                 {
@@ -192,7 +191,7 @@ namespace Web.Controllers.Realizations
 
             var userName = HttpContext.User.Identity?.Name;
             var user = _userManager.Users.FirstOrDefault(i => i.UserName == userName);
-            if (user.Id != adForDeleteDto.UserId)
+            if (user?.Id != adForDeleteDto.UserId)
             {
                 return NotFound(new Response()
                 {

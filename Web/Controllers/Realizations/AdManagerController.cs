@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Controllers.Abstractions;
 using Web.DTO.Ad;
 using Web.Services.Abstractions;
-using Web.Services.Realization;
 
 namespace Web.Controllers.Realizations
 {
