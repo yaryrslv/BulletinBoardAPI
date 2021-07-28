@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -75,21 +76,26 @@ namespace Web.Services.Realization
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-
-                var ad = _mapper.Map<Ad>(adFullDto); 
-                await _context.Ads.AddAsync(ad); 
-                await _context.SaveChangesAsync();
-
-                var adsCount = _context.Ads.Where(i => i.User.Id == user.Id).Count();
-                if (adsCount <= int.Parse(Configuration["MaxUserAds"]))
+                try
                 {
-                    transaction.Commit();
+                    var ad = _mapper.Map<Ad>(adFullDto);
+                    await _context.Ads.AddAsync(ad);
+                    await _context.SaveChangesAsync();
+
+                    var adsCount = _context.Ads.Where(i => i.User.Id == user.Id).Count();
+                    if (adsCount <= int.Parse(Configuration["MaxUserAds"]))
+                    {
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                    }
                 }
-                else
+                catch (DbUpdateException e)
                 {
                     transaction.Rollback();
                 }
-
             }
         }
         public async Task UpdateAsync(AdFullDto adFullDto)

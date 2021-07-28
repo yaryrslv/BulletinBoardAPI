@@ -18,8 +18,8 @@ namespace Data.EF
             this.SeedRoles(builder);
             builder.Entity<Ad>(b =>
             {
-                b.HasIndex(p => p.Id);
-                b.Property(p => p.Number).IsRequired().HasMaxLength(512);
+                b.HasIndex(p => p.Id).IsUnique();
+                b.HasIndex(p => p.Number).IsUnique();
                 b.Property(p => p.Text).IsRequired().HasMaxLength(2048);
                 b.Property(p => p.Rating).IsRequired().HasDefaultValue(0);
                 b.Property(p => p.CreateDate).IsRequired();

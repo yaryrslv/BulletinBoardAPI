@@ -131,7 +131,7 @@ namespace Web.Controllers.Realizations
             adFullDto.UserId = user?.Id;
             adFullDto.Id = Guid.NewGuid();
             await _adService.CreateAsync(adFullDto);
-            var updatedAdFullDto = _adService.GetByIdAsync(adFullDto.Id);
+            var updatedAdFullDto = await _adService.GetByIdAsync(adFullDto.Id);
             return CreatedAtRoute("GetAdById", new { id = updatedAdFullDto.Id}, updatedAdFullDto);
         }
         /// <summary>
