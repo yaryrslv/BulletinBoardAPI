@@ -74,7 +74,7 @@ namespace Web.Services.Realization
             adFullDto.ExpirationDite = adFullDto.CreateDate.AddMonths(1);
             adFullDto.Rating = 0;
 
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using (var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable))
             {
                 try
                 {
